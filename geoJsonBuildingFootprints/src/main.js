@@ -5,20 +5,12 @@ import "./style.css";
 
 // If GeoJSON files are not on the same domain as your website, a CORS enabled server
 // or a proxy is required.
-// const url = "./data/buildings-with-height-coverage.geojson";
-const url = "./data/10743.json";
-
-// Paste the url into a browser's address bar to download and view the attributes
-// in the GeoJSON file. These attributes include:
-// * mag - magnitude
-// * type - earthquake or other event such as nuclear test
-// * place - location of the event
-// * time - the time of the event
-// Use the Arcade Date() function to format time field into a human-readable format
+const url = "https://data.osmbuildings.org/0.2/anonymous/tile/15/17605/10743.json";
+// const url = "./data/15-17005-10743.json";
 
 const template = {
-  title: "Earthquake Info",
-  content: "Magnitude {mag} {type} hit {place} on {time}",
+  title: "Building Footprints",
+  content: "The height of this {type} building is {height}.",
   fieldInfos: [
     {
       fieldName: "time",
@@ -29,28 +21,41 @@ const template = {
   ]
 };
 
-const renderer = {
-  type: "simple",
-  field: "mag",
-  symbol: {
-    type: "simple-marker",
-    color: "orange",
-    outline: {
-      color: "white"
+const renderer =  {
+  type: "unique-value",
+  field: "type",
+  defaultSymbol: { type: "simple-fill" },
+  uniqueValueInfos: [{
+    value: "education",
+    symbol: {
+      type: "simple-fill",
+      color: "blue"
     }
-  },
+  }, {
+    value: "residential",
+    symbol: {
+      type: "simple-fill",
+      color: "green"
+    }
+  }, {
+    value: "commercial",
+    symbol: {
+      type: "simple-fill",
+      color: "orange"
+    }
+  }],
   visualVariables: [
     {
-      type: "size",
-      field: "mag",
+      type: "opacity",
+      field: "height",
       stops: [
         {
-          value: 2.5,
-          size: "4px"
+          value: 8,
+          opacity: 0.1
         },
         {
-          value: 8,
-          size: "40px"
+          value: 24,
+          opacity: 1
         }
       ]
     }
@@ -59,12 +64,12 @@ const renderer = {
 
 const geojsonLayer = new GeoJSONLayer({
   url: url,
-  // copyright: "USGS Earthquakes",
-  // popupTemplate: template,
-  // renderer: renderer,
-  // orderBy: {
-  //   field: "mag"
-  // }
+  copyright: "osmbuildings.org",
+  popupTemplate: template,
+  renderer: renderer,
+  orderBy: {
+    field: "height"
+  }
 });
 
 const gQuery = geojsonLayer.createQuery();
