@@ -2,8 +2,19 @@
 html,
 body,
 #viewDiv {
+  top: 0px;
   padding: 0;
   margin: 0;
   height: 100%;
-  width: 100%;
+  width: 50vw;
+  position:relative
+}
+#sceneDiv {
+  top: -100vh;
+  left: 50vw;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 50vw;
+  position: relative;
 }

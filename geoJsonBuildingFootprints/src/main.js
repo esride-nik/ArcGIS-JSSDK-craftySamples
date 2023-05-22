@@ -1,6 +1,7 @@
 import Map from "@arcgis/core/Map.js";
 import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
 import MapView from "@arcgis/core/views/MapView.js";
+import SceneView from "@arcgis/core/views/SceneView.js";
 import "./style.css";
 
 // If GeoJSON files are not on the same domain as your website, a CORS enabled server
@@ -90,3 +91,16 @@ view.when((v) => {
   console.log('v', v);
   v.goTo({target: extent.extent})
 })
+
+
+const scene = new SceneView({
+  container: "sceneDiv",
+  map: map
+});
+scene.when(async (s) => {
+  console.log('s', s);
+  await s.goTo({
+    target: extent.extent,
+    tilt: 45
+  })
+});
