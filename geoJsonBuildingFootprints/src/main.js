@@ -5,7 +5,8 @@ import "./style.css";
 
 // If GeoJSON files are not on the same domain as your website, a CORS enabled server
 // or a proxy is required.
-const url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson";
+// const url = "./data/buildings-with-height-coverage.geojson";
+const url = "./data/10743.json";
 
 // Paste the url into a browser's address bar to download and view the attributes
 // in the GeoJSON file. These attributes include:
@@ -58,13 +59,18 @@ const renderer = {
 
 const geojsonLayer = new GeoJSONLayer({
   url: url,
-  copyright: "USGS Earthquakes",
-  popupTemplate: template,
-  renderer: renderer,
-  orderBy: {
-    field: "mag"
-  }
+  // copyright: "USGS Earthquakes",
+  // popupTemplate: template,
+  // renderer: renderer,
+  // orderBy: {
+  //   field: "mag"
+  // }
 });
+
+const gQuery = geojsonLayer.createQuery();
+gQuery.where = '1=1';
+const extent = await geojsonLayer.queryExtent(gQuery);
+console.log('extent', extent);
 
 const map = new Map({
   basemap: "gray-vector",
@@ -73,7 +79,9 @@ const map = new Map({
 
 const view = new MapView({
   container: "viewDiv",
-  center: [-168, 46],
-  zoom: 2,
   map: map
 });
+view.when((v) => {
+  console.log('v', v);
+  v.goTo({target: extent.extent})
+})
