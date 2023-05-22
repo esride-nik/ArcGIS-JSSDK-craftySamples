@@ -1,0 +1,25 @@
+{
+  "name": "arcgis-jssdk-craftysamples",
+  "version": "1.0.0",
+  "description": "Crafty samples for the ArcGIS Maps SDK for JavaScript. Mostly adjustments of pre-existing samples.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esride-nik/ArcGIS-JSSDK-craftySamples.git"
+  },
+  "keywords": [
+    "arcgis",
+    "maps",
+    "sdk",
+    "javascript"
+  ],
+  "author": "Niklas Koehn, Esri Deutschland GmbH",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/esride-nik/ArcGIS-JSSDK-craftySamples/issues"
+  },
+  "homepage": "https://github.com/esride-nik/ArcGIS-JSSDK-craftySamples#readme"
+}
