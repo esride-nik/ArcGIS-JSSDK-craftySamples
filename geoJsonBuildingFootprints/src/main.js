@@ -2,7 +2,6 @@ import Map from "@arcgis/core/Map.js";
 import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
 import MapView from "@arcgis/core/views/MapView.js";
 import SceneView from "@arcgis/core/views/SceneView.js";
-import Renderer from "@arcgis/core/renderers/Renderer.js";
 import "./style.css";
 
 // If GeoJSON files are not on the same domain as your website, a CORS enabled server
@@ -12,15 +11,7 @@ const url = "https://data.osmbuildings.org/0.2/anonymous/tile/15/17605/10743.jso
 
 const template = {
   title: "Building Footprints",
-  content: "The height of this {type} building is {height}.",
-  fieldInfos: [
-    {
-      fieldName: "time",
-      format: {
-        dateFormat: "short-date-short-time"
-      }
-    }
-  ]
+  content: "The height of this {type} building is {height}."
 };
 
 
