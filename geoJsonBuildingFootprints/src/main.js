@@ -22,7 +22,10 @@ const template = {
   ]
 };
 
-const renderer =  {
+
+// 2D
+
+const renderer2d =  {
   type: "unique-value",
   field: "type",
   defaultSymbol: { type: "simple-fill" },
@@ -51,7 +54,7 @@ const renderer =  {
       field: "height",
       stops: [
         {
-          value: 8,
+          value: 0,
           opacity: 0.1
         },
         {
@@ -67,7 +70,7 @@ const geojsonLayer = new GeoJSONLayer({
   url: url,
   copyright: "osmbuildings.org",
   popupTemplate: template,
-  renderer: renderer,
+  renderer: renderer2d,
   orderBy: {
     field: "height"
   }
@@ -78,14 +81,14 @@ gQuery.where = '1=1';
 const extent = await geojsonLayer.queryExtent(gQuery);
 console.log('extent', extent);
 
-const map = new Map({
+const map2d = new Map({
   basemap: "gray-vector",
   layers: [geojsonLayer]
 });
 
 const view = new MapView({
   container: "viewDiv",
-  map: map
+  map: map2d
 });
 view.when((v) => {
   console.log('v', v);
@@ -93,9 +96,69 @@ view.when((v) => {
 })
 
 
+
+
+
+// 3D
+
+const renderer3d =  {
+  type: "simple",
+  symbol: {
+    type: "polygon-3d",
+    symbolLayers: [
+      {
+        type: "extrude"
+      }
+    ]
+  },
+  visualVariables: [
+    {
+      type: "size",
+      field: "height",
+      stops: [
+        {
+          value: 0,
+          size: 1,
+          label: "> 0"
+        },
+        {
+          value: 30,
+          size: 240,
+          label: "> 24"
+        }
+      ]
+    },{
+      type: "color",
+      field: "height",
+      stops: [
+        { value: 0, color: "#FFFCD4" },
+        { value: 24, color: "#0D2644" }
+      ],
+      legendOptions: {
+        title: "Building height"
+      }
+    }
+  ]
+};
+
+const geojsonLayer3D = new GeoJSONLayer({
+  url: url,
+  copyright: "osmbuildings.org",
+  popupTemplate: template,
+  renderer: renderer3d,
+  orderBy: {
+    field: "height"
+  }
+});
+
+const map3d = new Map({
+  basemap: "gray-vector",
+  layers: [geojsonLayer3D]
+});
+
 const scene = new SceneView({
   container: "sceneDiv",
-  map: map
+  map: map3d
 });
 scene.when(async (s) => {
   console.log('s', s);
