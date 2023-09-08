@@ -1,0 +1,29 @@
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+#syncSwitchDiv {
+  transition: background-color 0.5s linear;
+  background-color: black;
+  padding: 5px 5px 0px 5px;
+}
+.newData {	
+  animation: updating 1s linear infinite;
+}
+@keyframes updating {
+  0%{background-color: deepskyblue;}
+  50%{background-color: firebrick;}
+  100%{background-color: deepskyblue;}
+}
+#syncSwitchLabel, #groundPositionLabel {
+  display: inline-block;
+}
+#zoomInput, #tiltInput {
+  display: inline-block;
+  padding-left:10px;
+  width: 105px;
+}
