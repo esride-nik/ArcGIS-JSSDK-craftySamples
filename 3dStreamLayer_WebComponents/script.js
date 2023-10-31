@@ -2,7 +2,7 @@ require(["esri/layers/StreamLayer", "esri/arcade"], (StreamLayer, arcade) => {
     const updateData = async (data, view) => {
         const visualizationProfile = arcade.createArcadeProfile("visualization");
         const rotationAE =
-            await arcade.createArcadeExecutor("IIF($feature.point_direction > 0, $feature.point_direction, 360-$feature.point_direction)", visualizationProfile);
+            await arcade.createArcadeExecutor("IIF($feature.point_direction > 0, $feature.point_direction, 360+$feature.point_direction)", visualizationProfile);
 
         const rot = await rotationAE.executeAsync({
             "$feature": data,
@@ -46,8 +46,9 @@ require(["esri/layers/StreamLayer", "esri/arcade"], (StreamLayer, arcade) => {
             visualVariables: [
                 {
                     type: "rotation",
-                    // field: "point_direction",
-                    valueExpression: "IIF($feature.point_direction > 0, $feature.point_direction, 360-$feature.point_direction"
+                    field: "point_direction"
+                    // valueExpression: "IIF($feature.point_direction > 0, $feature.point_direction, 360+$feature.point_direction",
+                    // valueExpressionTitle: "Heading"
                 }
             ]
         };
