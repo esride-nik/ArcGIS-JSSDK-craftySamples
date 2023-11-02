@@ -65,7 +65,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/StreamLayer", "esr
     streamLayer.on("layerview-create", async (lv) => {
       console.log("stream layerview-create", lv);
       lv.layerView.on("data-received", (data) => {
-        if (syncIssPosition) updateCameraPosition(data)
+        if (syncIssPosition) updateCameraPosition(data, 0.5)
       });
     });
     console.log("streamLayer", streamLayer)
