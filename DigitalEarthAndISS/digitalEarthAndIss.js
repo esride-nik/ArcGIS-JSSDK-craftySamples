@@ -15,11 +15,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/StreamLayer", "esr
     Polyline
   ) => {
     let view;
-
-    const updateData = async (data) => {
-      console.log("data-received", data, view)
-      view?.goTo(new Point(data.geometry));
-    }
+    let issPoint;
 
     // 3D topo basemap with satellite imagery + labels
     const map = new Map({
@@ -68,67 +64,13 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/StreamLayer", "esr
 
     streamLayer.on("layerview-create", async (lv) => {
       console.log("stream layerview-create", lv);
-      lv.layerView.on("data-received", (data) => updateData(data));
+      lv.layerView.on("data-received", (data) => {
+        if (syncIssPosition) updateCameraPosition(data)
+      });
     });
     console.log("streamLayer", streamLayer)
 
     map.add(streamLayer);
-
-
-    // ISS FeatureLayer
-    const issFl = new FeatureLayer({
-      url: "https://services1.arcgis.com/1a2tmD6ZLIYsIeMb/ArcGIS/rest/services/Position_ISS/FeatureServer/0",
-      refreshInterval: 0.05,
-      id: "issPosition",
-      renderer: simpleIssRenderer,
-      labelingInfo: [
-        {
-          labelExpressionInfo: {
-            expression: document.getElementById("label-expression").text
-          },
-          useCodedValues: true,
-          maxScale: 0,
-          minScale: 0,
-          where: null,
-          labelPlacement: "center-right",
-          symbol: {
-            color: [
-              255,
-              140,
-              0,
-              255
-            ],
-            type: "text",
-            backgroundColor: [
-              0,
-              0,
-              0,
-              0.3
-            ],
-            borderLineColor: null,
-            haloSize: 0,
-            haloColor: null,
-            horizontalAlignment: "left",
-            rightToLeft: false,
-            angle: 0,
-            xoffset: 0,
-            yoffset: 0,
-            text: "",
-            rotated: false,
-            kerning: true,
-            font: {
-              size: 8.25,
-              style: "normal",
-              decoration: "none",
-              weight: "bold",
-              family: "Arial"
-            }
-          }
-        }
-      ],
-      transparency: 0
-    });
-    // map.add(issFl);
 
     // create graphic layer for ground ray
     let groundRayGraphic;
@@ -209,18 +151,11 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/StreamLayer", "esr
       }));
       groundRayGraphicLayer.add(groundRayGraphic);
 
-      // initial zoom to ISS
-      updateCameraPosition(1);
-
       // connect sync switch
       syncSwitch = document.getElementById("syncSwitch");
       syncSwitch.checked = true;
       syncSwitch.addEventListener("calciteSwitchChange", (sw) => {
         syncIssPosition = sw.srcElement.checked;
-        console.log("Sync ISS position:", syncIssPosition);
-        if (syncIssPosition === true) {
-          updateCameraPosition();
-        }
       });
 
       // connect groundPosition switch
@@ -235,7 +170,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/StreamLayer", "esr
       zoomInput.value = 6;
       zoomInput.addEventListener("calciteInputNumberChange", (inp) => {
         if (syncIssPosition === true) {
-          updateCameraPosition(1, false);
+          updateCameraPosition(null, 1, false);
         }
       });
 
@@ -244,54 +179,43 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/StreamLayer", "esr
       tiltInput.value = 40;
       tiltInput.addEventListener("calciteInputNumberChange", (inp) => {
         if (syncIssPosition === true) {
-          updateCameraPosition(1, false);
+          updateCameraPosition(null, 1, false);
         }
       });
     });
 
-    const updateCameraPosition = async (speedFactor = 0.1, bgColAni = true) => {
-      const flq = issFl.createQuery();
-      flq.where = "1=1";
-      flq.returnZ = true;
-      const flqres = await issFl.queryFeatures(flq);
-      if (flqres.features.length > 0) {
-        if (syncSwitchDiv && bgColAni) {
-          syncSwitchDiv.classList.add('newData');
-        }
-        const iss = flqres.features[flqres.features.length - 1];
+    const updateCameraPosition = async (data, speedFactor = 0.1, bgColAni = true) => {
+      if (syncSwitchDiv && bgColAni) {
+        syncSwitchDiv.classList.add('newData');
+      }
+      if (data !== null) {
+        issPoint = new Point(data.geometry);
+      }
 
-        // update ground ray
-        if (groundRayGraphicLayer.graphics.items.length > 0) {
-          groundRayGraphicLayer.remove(groundRayGraphicLayer.graphics.items[0]);
-          const groundRayPolyline = getGroundRayGraphic(new Polyline({
-            hasZ: true,
-            spatialReference: { "latestWkid": 3857, "wkid": 102100 },
-            paths: [[[iss.geometry.x, iss.geometry.y, 0], [iss.geometry.x, iss.geometry.y, iss.geometry.z]]]
-          }));
-          groundRayGraphicLayer.add(groundRayPolyline);
-        }
+      // update ground ray
+      if (groundRayGraphicLayer.graphics.items.length > 0) {
+        groundRayGraphicLayer.remove(groundRayGraphicLayer.graphics.items[0]);
+        const groundRayPolyline = getGroundRayGraphic(new Polyline({
+          hasZ: true,
+          spatialReference: { "latestWkid": 3857, "wkid": 102100 },
+          paths: [[[issPoint.x, issPoint.y, 0], [issPoint.x, issPoint.y, issPoint.z]]]
+        }));
+        groundRayGraphicLayer.add(groundRayPolyline);
+      }
 
-        // update camera
-        await view.goTo({
-          target: iss.geometry,
-          tilt: tiltInput ? tiltInput.value : 40,
-          zoom: zoomInput ? zoomInput.value : 6
-        }, {
-          animate: true,
-          speedFactor : speedFactor
-        });
-        if (syncSwitchDiv && bgColAni) {
-          syncSwitchDiv.classList.remove('newData');
-        }
+      // update camera
+      await view.goTo({
+        target: issPoint,
+        tilt: tiltInput ? tiltInput.value : 40,
+        zoom: zoomInput ? zoomInput.value : 6
+      }, {
+        animate: true,
+        speedFactor: speedFactor
+      });
+      if (syncSwitchDiv && bgColAni) {
+        syncSwitchDiv.classList.remove('newData');
       }
     }
-
-    issFl.on("refresh", async (r) => {
-      console.log("fl refreshed", r.dataChanged, syncIssPosition);
-      if (r.dataChanged === true && syncIssPosition) {
-        updateCameraPosition();
-      }
-    });
 
     const bgExpand = new Expand({
       expandIcon: "basemap",
