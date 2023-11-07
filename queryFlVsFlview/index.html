@@ -1,0 +1,172 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1,user-scalable=no"
+    />
+
+    <title>
+      Query FeatureLayer vs. FeatureLayerView
+    </title>
+
+    <!-- Load the Chart.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.28/esri/themes/light/main.css"
+    />
+
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+      #viewDiv {
+        position: absolute;
+        left: 0;
+        right: 380px;
+        top: 0;
+        bottom: 0;
+        height: 100%;
+      }
+      #panel {
+        position: absolute;
+        right: 0;
+        height: 100%;
+        width: 380px;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/4.28/"></script>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/LayerList",
+        "esri/core/reactiveUtils",
+      ], function (Map, MapView, FeatureLayer, LayerList, reactiveUtils) {
+        // Load a web map in a 2D MapView
+        const map = new Map({
+          basemap: "dark-gray-vector",
+        });
+
+        const treesFl = new FeatureLayer({
+          id: "trees",
+          url: "https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/Baumkataster_Berlin/FeatureServer/0",
+          outFields: ["*"], //kronedurch"],
+        });
+
+        map.add(treesFl);
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          popup: {
+            dockEnabled: true,
+            dockOptions: {
+              breakpoint: false,
+            },
+          },
+          extent: {
+            spatialReference: { latestWkid: 3857, wkid: 102100 },
+            xmin: 1508637.6272641567,
+            ymin: 6886465.075865904,
+            xmax: 1523351.7552090331,
+            ymax: 6896736.30154171,
+          },
+        });
+
+        view.watch("extent", (e) => console.log(JSON.stringify(e)));
+
+        // When the view loads, set up UI elements
+        let layerList;
+
+        view.when(() => {
+          view.whenLayerView(treesFl).then((layerView) => {
+            reactiveUtils.when(
+              () => !layerView.dataUpdating,
+              () => {
+                const whereClause = "baumhoehe > 21"; //kronedurch <> null"; //1=1"; //
+
+                queryLayerView(layerView, whereClause).then((lvData) => {
+                  console.log(
+                    `${lvData.features.length} features on layer view`
+                  );
+                });
+
+                queryLayer(treesFl, whereClause).then((lData) => {
+                  console.log(`${lData.length} features on layer`);
+                });
+              }
+            );
+          });
+
+          // Add a LayerList instance to the view
+          layerList = new LayerList({
+            view: view,
+            container: document.createElement("div"),
+            listItemCreatedFunction: function (event) {
+              const item = event.item;
+            },
+          });
+          layerList.container.style = "height: 100%";
+          let panelDiv = document.getElementById("panel");
+          panelDiv.appendChild(layerList.container);
+        });
+
+        // Query the layer view
+        const queryLayerView = async (layerView, whereClause) => {
+          // query statistics for features only in view extent
+          const query = layerView.createQuery();
+          query.where = whereClause;
+
+          // query features within the view's extent on the client
+          const lvResults = await layerView.queryFeatures(query);
+          return lvResults;
+        };
+
+        // Query the layer
+        const queryLayer = async (layer, whereClause) => {
+          // query statistics for features only in view extent
+          const query = layer.createQuery();
+          query.where = whereClause;
+          query.num = 2000;
+
+          // query features within the view's extent on the client
+          let lResults = [];
+          let resultSet;
+          let i = 1;
+          let featureCount = 0;
+          do {
+            query.start = featureCount;
+            resultSet = await layer.queryFeatures(query);
+            lResults = [...lResults, ...resultSet.features];
+            featureCount += resultSet.features.length;
+            console.log(
+              `Iteration ${i} received ${
+                resultSet.features.length
+              } features from layer. ${featureCount} features in total. Transfer limit ${
+                resultSet.exceededTransferLimit ? "exceeded" : "not exceeded"
+              }.`
+            );
+            i++;
+          } while (resultSet.exceededTransferLimit);
+          return lResults;
+        };
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+    <div id="panel"></div>
+  </body>
+</html>
