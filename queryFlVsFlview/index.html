@@ -50,10 +50,9 @@
         "esri/Map",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
-        "esri/layers/GraphicsLayer",
         "esri/widgets/LayerList",
         "esri/core/reactiveUtils",
-      ], function (Map, MapView, FeatureLayer, GraphicsLayer, LayerList, reactiveUtils) {
+      ], function (Map, MapView, FeatureLayer, LayerList, reactiveUtils) {
         // Load a web map in a 2D MapView
         const map = new Map({
           basemap: "dark-gray-vector",
@@ -85,8 +84,6 @@
           },
         });
 
-        view.watch("extent", (e) => console.log(JSON.stringify(e)));
-
         // When the view loads, set up UI elements
         let layerList;
 
@@ -102,25 +99,13 @@
                     `${lvData.features.length} features on layer view`
                   );
 
-                  const lvPointSymbol = {
-                    type: "simple-marker",
-                    color: [255, 0, 0, 1],
-                    size: 12,
-                    style: "triangle",
-                    outline: {
-                        width: 1,
-                        color: [255, 255, 255, 1]
-                    }
-                  }
-                  lvData.features.forEach(f => {
-                    f.symbol = lvPointSymbol;
-                  });
-
-                  const lvGraphicsLayer = new GraphicsLayer({
-                    graphics: lvData.features,
-                    id: 'layerViewGraphics'
-                  });
-                  map.add(lvGraphicsLayer);
+                  featureFilter = {
+                    objectIds: lvData.features.map(f => f.attributes.OBJECTID)
+                  };
+                   layerView.featureEffect = {
+                    filter: featureFilter,
+                    includedEffect: "bloom(800%, 1px, 0.2) hue-rotate(100deg)"
+                  };
                 });
 
                 queryLayer(treesFl, whereClause).then((lData) => {
