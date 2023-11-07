@@ -50,9 +50,10 @@
         "esri/Map",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
+        "esri/layers/GraphicsLayer",
         "esri/widgets/LayerList",
         "esri/core/reactiveUtils",
-      ], function (Map, MapView, FeatureLayer, LayerList, reactiveUtils) {
+      ], function (Map, MapView, FeatureLayer, GraphicsLayer, LayerList, reactiveUtils) {
         // Load a web map in a 2D MapView
         const map = new Map({
           basemap: "dark-gray-vector",
@@ -61,7 +62,7 @@
         const treesFl = new FeatureLayer({
           id: "trees",
           url: "https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/Baumkataster_Berlin/FeatureServer/0",
-          outFields: ["*"], //kronedurch"],
+          outFields: ["*"],
         });
 
         map.add(treesFl);
@@ -100,6 +101,26 @@
                   console.log(
                     `${lvData.features.length} features on layer view`
                   );
+
+                  const lvPointSymbol = {
+                    type: "simple-marker",
+                    color: [255, 0, 0, 1],
+                    size: 12,
+                    style: "triangle",
+                    outline: {
+                        width: 1,
+                        color: [255, 255, 255, 1]
+                    }
+                  }
+                  lvData.features.forEach(f => {
+                    f.symbol = lvPointSymbol;
+                  });
+
+                  const lvGraphicsLayer = new GraphicsLayer({
+                    graphics: lvData.features,
+                    id: 'layerViewGraphics'
+                  });
+                  map.add(lvGraphicsLayer);
                 });
 
                 queryLayer(treesFl, whereClause).then((lData) => {
