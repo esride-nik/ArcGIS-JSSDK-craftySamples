@@ -44,17 +44,25 @@
 
           console.log(bkFl.renderer.uniqueValueInfos.map((uvi) => uvi.symbol));
 
-          const symbol = new WebStyleSymbol({
+          const wStrSymbol = new WebStyleSymbol({
             styleName: "esriRealisticTreesStyle",
             name: "Other",
           });
-          const strSymbol = await symbol.fetchSymbol();
-          var objectSymbolLayer = strSymbol.symbolLayers.getItemAt(0);
-          objectSymbolLayer.material = { color: "red" };
+          const strSymbol = await wStrSymbol.fetchSymbol();
+          const sObjectSymbolLayer = strSymbol.symbolLayers.getItemAt(0);
+          sObjectSymbolLayer.material = { color: "red" };
+
+          const wAnlSymbol = new WebStyleSymbol({
+            styleName: "esriRealisticTreesStyle",
+            name: "Other",
+          });
+          const anlSymbol = await wAnlSymbol.fetchSymbol();
+          const aObjectSymbolLayer = anlSymbol.symbolLayers.getItemAt(0);
+          aObjectSymbolLayer.material = { color: "blue" };
 
           bkFl.renderer = {
           type: "simple",
-          symbol: strSymbol,
+          symbol: anlSymbol,
         //   {
         //     type: "web-style",
         //     styleName: "esriRealisticTreesStyle",
