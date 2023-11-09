@@ -6,9 +6,7 @@
       content="initial-scale=1, maximum-scale=1,user-scalable=no"
     />
 
-    <title>
-      Query FeatureLayer vs. FeatureLayerView
-    </title>
+    <title>Query FeatureLayer vs. FeatureLayerView</title>
 
     <!-- Load the Chart.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
@@ -30,7 +28,7 @@
       #viewDiv {
         position: absolute;
         left: 0;
-        right: 380px;
+        right: 0px;
         top: 0;
         bottom: 0;
         height: 100%;
@@ -71,10 +69,10 @@
           },
           extent: {
             spatialReference: { latestWkid: 3857, wkid: 102100 },
-            xmin: 1508637.6272641567,
-            ymin: 6886465.075865904,
-            xmax: 1523351.7552090331,
-            ymax: 6896736.30154171,
+            xmin: 1513123.5253616376,
+            ymin: 6892900.118184648,
+            xmax: 1522295.9687558464,
+            ymax: 6897462.453310413,
           },
         });
 
@@ -94,11 +92,13 @@
                   );
 
                   featureFilter = {
-                    objectIds: lvData.features.map(f => f.attributes.OBJECTID)
+                    objectIds: lvData.features.map(
+                      (f) => f.attributes.OBJECTID
+                    ),
                   };
-                   layerView.featureEffect = {
+                  layerView.featureEffect = {
                     filter: featureFilter,
-                    includedEffect: "bloom(800%, 1px, 0.2) hue-rotate(100deg)"
+                    includedEffect: "bloom(800%, 1px, 0.2) hue-rotate(100deg)",
                   };
                 });
 
