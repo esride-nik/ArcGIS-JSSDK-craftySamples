@@ -14,7 +14,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "usingWebMapInScene_extrude",
+            "name": "usingWebMapInScene",
             "url": "http://localhost:8080",
             "file": "${workspaceFolder}/usingWebMapInScene/index.html"
         }
