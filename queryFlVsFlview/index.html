@@ -35,12 +35,6 @@
         bottom: 0;
         height: 100%;
       }
-      #panel {
-        position: absolute;
-        right: 0;
-        height: 100%;
-        width: 380px;
-      }
     </style>
 
     <script src="https://js.arcgis.com/4.28/"></script>
@@ -118,14 +112,11 @@
           // Add a LayerList instance to the view
           layerList = new LayerList({
             view: view,
-            container: document.createElement("div"),
             listItemCreatedFunction: function (event) {
               const item = event.item;
             },
           });
-          layerList.container.style = "height: 100%";
-          let panelDiv = document.getElementById("panel");
-          panelDiv.appendChild(layerList.container);
+          view.ui.add(layerList, "top-right");
         });
 
         // Query the layer view
@@ -173,6 +164,5 @@
 
   <body>
     <div id="viewDiv"></div>
-    <div id="panel"></div>
   </body>
 </html>
