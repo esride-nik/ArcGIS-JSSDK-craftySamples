@@ -92,7 +92,7 @@
             reactiveUtils.when(
               () => !layerView.dataUpdating,
               () => {
-                const whereClause = "baumhoehe > 21"; //kronedurch <> null"; //1=1"; //
+                const whereClause = "baumhoehe > 21";
 
                 queryLayerView(layerView, whereClause).then((lvData) => {
                   console.log(
