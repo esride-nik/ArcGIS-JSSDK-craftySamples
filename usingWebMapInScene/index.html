@@ -1,0 +1,109 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Using WebMap in SceneView</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.28/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.28/"></script>
+
+    <script>
+      require([
+        "esri/WebMap",
+        "esri/views/SceneView",
+        "esri/widgets/Home",
+        "esri/layers/FeatureLayer",
+        "esri/symbols/WebStyleSymbol",
+      ], (WebMap, SceneView, Home, FeatureLayer, WebStyleSymbol) => {
+        const map = new WebMap({
+          portalItem: {
+            // enter WebMap ID
+            id: "c5ea4b492fab41ecbfac33a0a514b946",
+          },
+        });
+        map.when(async () => {
+          const bkFl = map.allLayers.items.filter(
+            (l) => (l.title = "Baumkataster - Berlin")
+          )[0];
+
+          console.log(bkFl.renderer.uniqueValueInfos.map((uvi) => uvi.symbol));
+
+          const symbol = new WebStyleSymbol({
+            styleName: "esriRealisticTreesStyle",
+            name: "Other",
+          });
+          const strSymbol = await symbol.fetchSymbol();
+          var objectSymbolLayer = strSymbol.symbolLayers.getItemAt(0);
+          objectSymbolLayer.material = { color: "red" };
+
+          bkFl.renderer = {
+          type: "simple",
+          symbol: strSymbol,
+        //   {
+        //     type: "web-style",
+        //     styleName: "esriRealisticTreesStyle",
+        //     name: "Other"
+        //   },
+          label: "tree",
+            // field: "Kategorie",
+            // uniqueValueInfos: [
+            //   {
+            //     label: "Anlagebaum",
+            //     symbol: createSymbol([255, 179, 219]),
+            //     value: "Anlagebaum",
+            //   },
+            //   {
+            //     label: "Straßenbaum",
+            //     symbol: createSymbol([255, 179, 219]),
+            //     value: "Straßenbaum",
+            //   },
+            // ],
+            visualVariables: [
+              {
+                type: "size",
+                axis: "height",
+                field: "baumhoehe",
+                valueUnit: "meters",
+              },
+            ],
+          };
+
+
+        //   var renderer = bkFl.renderer.clone();
+        //   renderer.symbol = strSymbol;
+        //   bkFl.renderer = renderer;
+        });
+
+        const view = new SceneView({
+          container: "viewDiv",
+          map: map,
+        });
+
+        const homeWidget = new Home({
+          view: view,
+        });
+        view.ui.add(homeWidget, "top-left");
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>

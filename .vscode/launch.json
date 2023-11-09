@@ -10,6 +10,13 @@
             "name": "queryFlVsFlview",
             "url": "http://localhost:8080",
             "file": "${workspaceFolder}/queryFlVsFlview/index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "usingWebMapInScene_extrude",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/usingWebMapInScene/index.html"
         }
     ]
 }
