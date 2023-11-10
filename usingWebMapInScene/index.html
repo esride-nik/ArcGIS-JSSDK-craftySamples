@@ -37,10 +37,13 @@
             id: "c5ea4b492fab41ecbfac33a0a514b946",
           },
         });
+
         map.when(async () => {
           const bkFl = map.allLayers.items.filter(
             (l) => (l.title = "Baumkataster - Berlin")
           )[0];
+
+          bkFl.popupTemplate = bkPopupTemplate;
 
           const wStrSymbol = new WebStyleSymbol({
             styleName: "esriRealisticTreesStyle",
@@ -59,9 +62,9 @@
           aObjectSymbolLayer.material = { color: "blue" };
 
           bkFl.renderer = {
-          type: "unique-value",
-          symbol: anlSymbol,
-          label: "tree",
+            type: "unique-value",
+            symbol: anlSymbol,
+            label: "tree",
             field: "Kategorie",
             uniqueValueInfos: [
               {
@@ -89,12 +92,37 @@
         const view = new SceneView({
           container: "viewDiv",
           map: map,
+          camera: {
+            position: {
+              spatialReference: { latestWkid: 3857, wkid: 102100 },
+              x: 1495961.4922530812,
+              y: 6889789.710743619,
+              z: 100.76839248742908,
+            },
+            heading: 345.1459219420446,
+            tilt: 89.24932402302998,
+          },
+        });
+
+        view.watch("camera", (e) => {
+          console.log(JSON.stringify(e));
+          0;
         });
 
         const homeWidget = new Home({
           view: view,
         });
         view.ui.add(homeWidget, "top-left");
+
+        const bkPopupTemplate = {
+          title: "{Kategorie}",
+          content: [
+            {
+              type: "text",
+              text: 'This tree is <span style="font-weight:bold;line-height:1 !important;font-size:7em;margin:0px;">{baumhoehe}</span> meters tall.',
+            },
+          ],
+        };
       });
     </script>
   </head>
