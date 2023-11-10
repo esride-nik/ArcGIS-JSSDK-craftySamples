@@ -7,16 +7,30 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "queryFlVsFlview",
+            "name": "Query FL vs FLV",
             "url": "http://localhost:8080",
             "file": "${workspaceFolder}/queryFlVsFlview/index.html"
         },
         {
             "type": "chrome",
             "request": "launch",
-            "name": "usingWebMapInScene",
+            "name": "Query FLV extent",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/FlvReactive/index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Using WebMap in WebScene",
             "url": "http://localhost:8080",
             "file": "${workspaceFolder}/usingWebMapInScene/index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "LayerList 2 WebComponents",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/webcomponents_LayerList/index.html"
         }
     ]
 }
