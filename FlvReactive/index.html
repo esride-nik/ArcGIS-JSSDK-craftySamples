@@ -68,7 +68,7 @@
         view.whenLayerView(fLayer).then(async (layerView) => {
           await reactiveUtils.whenOnce(() => !layerView.updating);
           layerView.queryExtent().then((result) => {
-            console.log("extent loaded");
+            console.log("extent loaded", result);
             view.goTo(result);
           });
         });
