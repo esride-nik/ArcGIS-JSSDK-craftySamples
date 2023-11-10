@@ -56,19 +56,19 @@
           camera: {
             position: {
               spatialReference: { latestWkid: 3857, wkid: 102100 },
-              x: 1495961.4922530812,
-              y: 6889789.710743619,
-              z: 100.76839248742908,
+              x: 1496897.377635181,
+              y: 6899895.027582289,
+              z: 394.41348774638027,
             },
-            heading: 345.1459219420446,
-            tilt: 89.24932402302998,
+            heading: 219.28231937566716,
+            tilt: 87.12306444040374,
           },
         });
 
-        // view.watch("camera", (e) => {
-        //   console.log(JSON.stringify(e));
-        //   0;
-        // });
+        view.watch("camera", (e) => {
+          console.log(JSON.stringify(e));
+          0;
+        });
 
         const homeWidget = new Home({
           view: view,
@@ -128,7 +128,7 @@
               },
             ],
           };
-        }
+        };
       });
     </script>
   </head>
