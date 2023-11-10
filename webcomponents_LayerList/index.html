@@ -20,38 +20,29 @@
 
     <script src="https://js.arcgis.com/4.28/"></script>
 
-    <script>
-      require(["esri/views/SceneView", "esri/widgets/LayerList", "esri/WebScene"],
-      (
-        SceneView,
-        LayerList,
-        WebScene
-      ) => {
-        const scene = new WebScene({
-          portalItem: {
-            // autocasts as new PortalItem()
-            id: "adfad6ee6c6043238ea64e121bb6429a"
-          }
-        });
-
-        const view = new SceneView({
-          container: "viewDiv",
-          map: scene
-        });
-
-        view.when(() => {
-          const layerList = new LayerList({
-            view: view
-          });
-
-          // Add widget to the top right corner of the view
-          view.ui.add(layerList, "top-right");
-        });
-      });
-    </script>
+    <!-- Load Map Components from CDN-->
+    <script type="module" src="https://js.arcgis.com/map-components/4.28/arcgis-map-components.esm.js"></script>
+    
   </head>
 
-  <body class="calcite">
-    <div id="viewDiv"></div>
+  <body class="calcite"> 
+    <arcgis-scene item-id="adfad6ee6c6043238ea64e121bb6429a">
+        <arcgis-layer-list position="top-right" />
+    </arcgis-scene>
+    
+    <script>
+        require([], () => {
+          let view;
+          document.querySelector("arcgis-scene").addEventListener("viewReady", async (event) => {
+              view = event.detail.view;
+              view.when().then(runApp);
+          });
+  
+          const runApp = () => {
+              console.log('View \'s ready. Continue imperatively from here.', view);
+          }
+  
+        });
+      </script>
   </body>
 </html>
