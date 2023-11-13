@@ -35,7 +35,7 @@
           let view;
           document.querySelector("arcgis-scene").addEventListener("viewReady", async (event) => {
               view = event.detail.view;
-              view.when().then(runApp);
+              runApp();
           });
   
           const runApp = () => {
