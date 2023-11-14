@@ -6,11 +6,22 @@ body,
   margin: 0;
   padding: 0;
 }
-/* JSSDK snippet / VS Code snippet: 
+/* TODO: JSSDK snippet / VS Code snippet: 
 styles to align map divs in different screen position, incl. typical overview maps */
-#overviewDiv {
+/* TODO: these two overviews in one menu */
+#overview1 {
   position: absolute;
   top: 12px;
+  right: 12px;
+  width: 300px;
+  height: 200px;
+  border: 1px solid black;
+  z-index: 1;
+  overflow: hidden;
+}
+#overview2 {
+  position: absolute;
+  top: 212px;
   right: 12px;
   width: 300px;
   height: 200px;
