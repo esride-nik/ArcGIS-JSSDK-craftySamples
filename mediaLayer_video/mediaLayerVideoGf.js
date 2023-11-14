@@ -183,7 +183,13 @@ require([
         const overview = new SceneView({
             container: targetContainer,
             map: webscene,
+            id: targetContainer,
+            ui: {
+                components: []
+            }
         });
+
+        overview.when().then((v) => console.log('ui', v.id, v.ui))
 
 
     }
