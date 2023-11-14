@@ -3,27 +3,33 @@
 require([
     "esri/Map",
     "esri/WebScene",
+    "esri/Graphic",
     "esri/views/SceneView",
     "esri/layers/MediaLayer",
     "esri/layers/FeatureLayer",
+    "esri/layers/GraphicsLayer",
     "esri/layers/support/VideoElement",
     "esri/layers/support/ExtentAndRotationGeoreference",
     "esri/widgets/LayerList",
     "esri/widgets/Expand",
     "esri/geometry/Extent",
     "esri/widgets/Slider",
+    "esri/symbols/PointSymbol3D"
 ], (
     Map,
     WebScene,
+    Graphic,
     SceneView,
     MediaLayer,
     FeatureLayer,
+    GraphicsLayer,
     VideoElement,
     ExtentAndRotationGeoreference,
     LayerList,
     Expand,
     Extent,
-    Slider
+    Slider,
+    PointSymbol3D
 ) => {
     // create a video element by setting video param to point to the video file url
     // set the geographic location of the video file on the map using an extent
@@ -189,26 +195,85 @@ require([
             },
             alphaCompositingEnabled: true,
             environment: {
-              background: {
-                type: "color", 
-                // set the color alpha to 0 for full transparency
-                color: [255, 252, 244, 0]
-              },
-              starsEnabled: false,
-              atmosphereEnabled: false
+                background: {
+                    type: "color",
+                    // set the color alpha to 0 for full transparency
+                    color: [255, 252, 244, 0]
+                },
+                starsEnabled: false,
+                atmosphereEnabled: false
             }
         });
 
-        overview.when().then((v) => console.log('ui', v.id, v.ui))
-
-
+        return {
+            view: overview,
+            graphic: new Graphic({
+                id: targetContainer + 'Graphic',
+                geometry: overview.position,
+                symbol: new PointSymbol3D({
+                    callout: {
+                      type: "line",
+                      color: [0,0,0,1],
+                      size: 0
+                    },
+                    symbolLayers: [
+                 
+                      {
+                        type: "object",
+                        anchor: "center",
+                        anchorPosition: {
+                          x: 0,
+                          y: 0,
+                          z: 0
+                        },
+                        castShadows: false,
+                        depth: 10,
+                        heading: 0,
+                        height: 10,
+                        material: {
+                          color: [255,0,0,1]
+                        },
+                        resource: {
+                          primitive: "sphere",
+                        },
+                        roll: 0,
+                        tilt: 0,
+                        width: 10
+                      },
+                      
+                    ],
+                    verticalOffset: {
+                      maxWorldLength: 100,
+                      minWorldLength: 0,
+                      screenLength: 0
+                    }
+                  })
+            })
+        };
     }
 
+    const overviewGl = new GraphicsLayer({
+        id: 'overviewGl'
+    });
+    map.add(overviewGl);
 
-    createScene(["#FAA732", "#DE1770", "#5EADE1"], "overview1");
-    createScene(["#7F2C85", "#F8EB35", "#AE1B2A"], "overview2");
-    // createScene(["#1FB8B5", "#EAECAA", "#612F91"], "overview3");
-    // createScene(["#E2242D", "#106BAC", "#E5922B"], "overview4");
+    const overview1 = createScene(["#FAA732", "#DE1770", "#5EADE1"], "overview1");
+    const overview2 = createScene(["#7F2C85", "#F8EB35", "#AE1B2A"], "overview2");
+    // const overview3 = createScene(["#1FB8B5", "#EAECAA", "#612F91"], "overview3");
+    // const overview4 = createScene(["#E2242D", "#106BAC", "#E5922B"], "overview4");
+
+    // TODO: add one time, then update
+    overviewGl.add(overview1.graphic);
+    overview1.view.watch("camera", (c) => {
+        console.log('connect to edge', )
+        
+        vElement.georeference.extent.xmin = c.position.latitude;
+        vElement.georeference.extent.ymin = c.position.longitude;
+    })
+    overview1.graphic
+
+    // overview1.when().then((v) => {
+    // })
 
     // TODO: event listeners on scene view
     // xminSlider.addEventListener("calciteSliderInput", () => {
@@ -227,4 +292,5 @@ require([
     //   console.log("ymax", ymaxSlider.value);
     //   vElement.georeference.extent.ymax = ymaxSlider.value;
     // });
+
 });
