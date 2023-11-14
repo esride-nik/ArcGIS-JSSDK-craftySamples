@@ -7,6 +7,7 @@ require([
     "esri/layers/support/VideoElement",
     "esri/layers/support/ExtentAndRotationGeoreference",
     "esri/widgets/LayerList",
+    "esri/widgets/Expand",
     "esri/geometry/Extent",
     "esri/widgets/Slider",
   ], (
@@ -16,6 +17,7 @@ require([
     VideoElement,
     ExtentAndRotationGeoreference,
     LayerList,
+    Expand,
     Extent,
     Slider
   ) => {
@@ -100,8 +102,13 @@ require([
       view,
       listItemCreatedFunction: defineActions,
     });
+    const llExpand = new Expand({
+      view: view,
+      content: layerList,
+      expanded: false,
+    });
 
-    view.ui.add(layerList, "top-right");
+    view.ui.add(llExpand, "lower-right");
     function defineActions(event) {
       const item = event.item;
       item.actionsSections = [
@@ -143,16 +150,16 @@ require([
 const overview = new SceneView({
     container: "overviewDiv",
     map: map,
-    camera: {
-        position: {
-        spatialReference: { latestWkid: 3857, wkid: 102100 },
-        x: -13154262.045092562,
-        y: 3970824.908822286,
-        z: 300793.5274479827,
-        },
-        heading: 357.134040187626,
-        tilt: 13.728486129501949,
-    },
+    // camera: {
+    //     position: {
+    //     spatialReference: { latestWkid: 3857, wkid: 102100 },
+    //     x: -13154262.045092562,
+    //     y: 3970824.908822286,
+    //     z: 300793.5274479827,
+    //     },
+    //     heading: 357.134040187626,
+    //     tilt: 13.728486129501949,
+    // },
     });
 
     // TODO: event listeners on scene view
