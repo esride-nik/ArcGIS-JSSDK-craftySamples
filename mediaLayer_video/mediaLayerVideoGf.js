@@ -186,6 +186,16 @@ require([
             id: targetContainer,
             ui: {
                 components: []
+            },
+            alphaCompositingEnabled: true,
+            environment: {
+              background: {
+                type: "color", 
+                // set the color alpha to 0 for full transparency
+                color: [255, 252, 244, 0]
+              },
+              starsEnabled: false,
+              atmosphereEnabled: false
             }
         });
 

@@ -13,9 +13,8 @@ styles to align map divs in different screen position, incl. typical overview ma
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 300px;
+  width: 200px;
   height: 200px;
-  border: 1px solid black;
   z-index: 1;
   overflow: hidden;
 }
@@ -23,9 +22,8 @@ styles to align map divs in different screen position, incl. typical overview ma
   position: absolute;
   top: 212px;
   right: 12px;
-  width: 300px;
+  width: 200px;
   height: 200px;
-  border: 1px solid black;
   z-index: 1;
   overflow: hidden;
 }
