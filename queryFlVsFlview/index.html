@@ -36,6 +36,15 @@
     </style>
 
     <script src="https://js.arcgis.com/4.28/"></script>
+    <script
+      type="module"
+      src="https://js.arcgis.com/calcite-components/1.9.2/calcite.esm.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://js.arcgis.com/calcite-components/1.9.2/calcite.css"
+    />
 
     <script>
       require([
@@ -83,28 +92,34 @@
           view.whenLayerView(treesFl).then((layerView) => {
             reactiveUtils.when(
               () => !layerView.dataUpdating,
-              () => {
+              async () => {
+                // define same where clause for both queries
                 const whereClause = "baumhoehe > 21";
 
-                queryLayerView(layerView, whereClause).then((lvData) => {
-                  console.log(
-                    `${lvData.features.length} features on layer view`
-                  );
+                // query feature layer view
+                const lvData = await queryLayerView(layerView, whereClause);
+                console.log(`${lvData.features.length} features with '${whereClause}' on layer view`);
+                const flvAlert = document.getElementById("flvAlert");
+                flvAlert.open = true;
+                const flvAlertMsg = document.getElementById("flvAlertMsg");
+                flvAlertMsg.textContent = `\n${lvData.features.length} features with '${whereClause}' on layer view.\n`;
 
-                  featureFilter = {
-                    objectIds: lvData.features.map(
-                      (f) => f.attributes.OBJECTID
-                    ),
-                  };
-                  layerView.featureEffect = {
-                    filter: featureFilter,
-                    includedEffect: "bloom(800%, 1px, 0.2) hue-rotate(100deg)",
-                  };
-                });
+                // apply visual effect
+                featureFilter = {
+                  objectIds: lvData.features.map((f) => f.attributes.OBJECTID),
+                };
+                layerView.featureEffect = {
+                  filter: featureFilter,
+                  includedEffect: "bloom(800%, 1px, 0.2) hue-rotate(100deg)",
+                };
 
-                queryLayer(treesFl, whereClause).then((lData) => {
-                  console.log(`${lData.length} features on layer`);
-                });
+                // query feature layer
+                const lData = await queryLayer(treesFl, whereClause);
+                console.log(`${lData.length} features with '${whereClause}' on layer`);
+                const flAlert = document.getElementById("flAlert");
+                flAlert.open = true;
+                const flAlertMsg = document.getElementById("flAlertMsg");
+                flAlertMsg.textContent = `\n${lData.length} features with '${whereClause}' on layer.\n`;
               }
             );
           });
@@ -163,6 +178,24 @@
   </head>
 
   <body>
-    <div id="viewDiv"></div>
+    <calcite-shell>
+      <div id="viewDiv"></div>
+      <calcite-alert
+        open="false"
+        id="flvAlert"
+        label="FeatureLayerView query results"
+        scale="l"
+      >
+        <div slot="title" id="flvAlertMsg">no no no</div>
+      </calcite-alert>
+      <calcite-alert
+        open="false"
+        id="flAlert"
+        label="FeatureLayer query results"
+        scale="l"
+      >
+        <div slot="title" id="flAlertMsg">no no no</div>
+      </calcite-alert>
+    </calcite-shell>
   </body>
 </html>
