@@ -21,6 +21,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  DIRECTORY_LISTING: |
+    ls ${{ github.workspace }}
+
 jobs:
   toc-and-deploy:
     environment:
@@ -54,7 +58,7 @@ jobs:
             <body>
                 <main>
                 <h1>Table of Contents</h1>
-                ${{ github.workspace }}
+                $DIRECTORY_LISTING
                 </main>
             </body>
             </html>     
