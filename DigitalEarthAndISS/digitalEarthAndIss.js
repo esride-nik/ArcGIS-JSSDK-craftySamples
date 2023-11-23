@@ -1,4 +1,18 @@
-require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "esri/layers/GraphicsLayer", "esri/Basemap", "esri/views/SceneView", "esri/widgets/BasemapGallery", "esri/widgets/Expand", "esri/widgets/Search", "esri/widgets/LayerList", "esri/geometry/Polyline"],
+require([
+  "esri/Map",
+  "esri/layers/FeatureLayer",
+  "esri/layers/ImageryLayer",
+  "esri/layers/GraphicsLayer",
+  "esri/Basemap",
+  "esri/views/SceneView",
+  "esri/widgets/BasemapGallery",
+  "esri/widgets/Expand",
+  "esri/widgets/Search",
+  "esri/widgets/LayerList",
+  "esri/widgets/Legend",
+  "esri/geometry/Polyline",
+  "esri/config"
+],
   (
     Map,
     FeatureLayer,
@@ -10,8 +24,21 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
     Expand,
     Search,
     LayerList,
-    Polyline
+    Legend,
+    Polyline,
+    esriConfig
   ) => {
+    const issFlUrl = "https://services1.arcgis.com/1a2tmD6ZLIYsIeMb/ArcGIS/rest/services/Position_ISS/FeatureServer/0";
+
+    // Due to an issue on the service, there are several 'ISS' features with the same ID - only the newest one being updated. This happens randomly.
+    // This is a hack to only get back the newest feature.
+    esriConfig.request.interceptors.push({
+      urls: issFlUrl,  
+      before: (params) => {
+        params.requestOptions.query.where = `time_stamp > CURRENT_TIMESTAMP - 1`;
+      }
+    });
+
     // 3D topo basemap with satellite imagery + labels
     const map = new Map({
       basemap: new Basemap({
@@ -35,7 +62,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
     };
 
     const issFl = new FeatureLayer({
-      url: "https://services1.arcgis.com/1a2tmD6ZLIYsIeMb/ArcGIS/rest/services/Position_ISS/FeatureServer/0",
+      url: issFlUrl,
       refreshInterval: 0.05,
       id: "issPosition",
       renderer: {
@@ -169,7 +196,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
         spatialReference: { "latestWkid": 3857, "wkid": 102100 },
         paths: [[[0, 0, 0], [0, 0, 400000]]]
       }));
-      console.log(JSON.stringify(groundRayGraphic));
+      // console.log(JSON.stringify(groundRayGraphic));
       groundRayGraphicLayer.add(groundRayGraphic);
 
       // initial zoom to ISS
@@ -221,7 +248,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
         if (syncSwitchDiv && bgColAni) {
           syncSwitchDiv.classList.add('newData');
         }
-        console.log(flqres.features, flqres.features.length - 1, flqres.features[flqres.features.length - 1])
+        // console.log(flqres.features, flqres.features.length - 1, flqres.features[flqres.features.length - 1])
         const iss = flqres.features[flqres.features.length - 1];
 
         // update ground ray
@@ -251,7 +278,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
     }
 
     issFl.on("refresh", async (r) => {
-      console.log("fl refreshed", r.dataChanged, syncIssPosition);
+      // console.log("fl refreshed", r.dataChanged, syncIssPosition);
       if (r.dataChanged === true && syncIssPosition) {
         updateCameraPosition();
       }
@@ -275,18 +302,27 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
       })
     })
 
+    const lgdExpand = new Expand({
+      expandIcon: "legend",
+      expandTooltip: "Legend",
+      view: view,
+      content: new Legend({
+        view: view
+      })
+    })
+
     const searchWidget = new Search({
       view: view
     });
 
     syncSwitchDiv = document.createElement("div");
     syncSwitchDiv.id = "syncSwitchDiv";
-    syncSwitchDiv.innerHTML = `<calcite-label id="syncSwitchLabel" layout="inline"><calcite-switch id="syncSwitch"></calcite-switch>Sync ISS position</calcite-label>
-  <calcite-label id="groundPositionLabel" layout="inline"><calcite-switch id="groundPosition"></calcite-switch>Show ground position</calcite-label>
-  <calcite-input-number id="zoomInput" step="1" min="1" max="15" maxLength="2" icon="zoom-to-object" alignment="end"></calcite-input-number>
-  <calcite-input-number id="tiltInput" step="1" min="1" max="90" maxLength="2" icon="center-vertical" alignment="end"></calcite-input-number>`;
+    syncSwitchDiv.innerHTML = `<calcite-label id="syncSwitchLabel" class="syncSwitchLabel" layout="inline"><calcite-switch id="syncSwitch"></calcite-switch>Sync ISS position</calcite-label>
+  <calcite-label id="groundPositionLabel" class="syncSwitchLabel" layout="inline"><calcite-switch id="groundPosition"></calcite-switch>Show ground position</calcite-label>
+  <calcite-input-number id="zoomInput" class="syncSwitchNumberInput" step="1" min="1" max="15" maxLength="2" icon="zoom-to-object" alignment="end"></calcite-input-number>
+  <calcite-input-number id="tiltInput" class="syncSwitchNumberInput" step="1" min="1" max="90" maxLength="2" icon="center-vertical" alignment="end"></calcite-input-number>`;
 
-    view.ui.add([syncSwitchDiv, searchWidget, bgExpand, lyrExpand],
+    view.ui.add([syncSwitchDiv, searchWidget, bgExpand, lyrExpand, lgdExpand],
       {
         position: "top-right"
       });
