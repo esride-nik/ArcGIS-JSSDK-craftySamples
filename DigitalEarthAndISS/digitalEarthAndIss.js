@@ -38,6 +38,7 @@ require([
 
       const issFl = new FeatureLayer({
         url: "https://services1.arcgis.com/1a2tmD6ZLIYsIeMb/ArcGIS/rest/services/Position_ISS/FeatureServer/0",
+        // url: "https://demoportal11.esri.de/server/rest/services/Hosted/ISS_Position/FeatureServer/0",
         refreshInterval: 0.05,
         id: "issPosition",
         renderer: {
@@ -92,7 +93,7 @@ require([
         transparency: 0
       });
 
-      map.add(issFl);
+      // map.add(issFl);
 
       // create graphic layer + global graphic for ground ray
       let groundRayGraphic;
@@ -158,7 +159,6 @@ require([
           }
         }
       }
-
 
       view.when((_v) => {
         groundRayGraphic = getGroundRayGraphic(new Polyline({
