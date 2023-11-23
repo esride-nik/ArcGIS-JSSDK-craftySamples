@@ -36,6 +36,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: List files in the repository
+        id: dir_list
         run: |
           ls ${{ github.workspace }}
 
@@ -58,7 +59,9 @@ jobs:
             <body>
                 <main>
                 <h1>Table of Contents</h1>
-                $DIRECTORY_LISTING
+                <p><h4>steps.dir_list</h4>${{steps.dir_list}}</p>
+                <p><h4>steps.dir_list.outputs</h4>${{steps.dir_list.outputs}}</p>
+                <p><h4>steps.dir_list.outputs.*</h4>${{steps.dir_list.outputs.*}}</p>
                 </main>
             </body>
             </html>     
