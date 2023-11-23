@@ -1,15 +1,13 @@
-require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "esri/layers/GraphicsLayer", "esri/Basemap", "esri/views/SceneView", "esri/widgets/BasemapGallery", "esri/widgets/Expand", "esri/widgets/Search", "esri/widgets/LayerList", "esri/geometry/Polyline"],
+require([
+  "esri/layers/FeatureLayer",
+  "esri/layers/ImageryLayer",
+  "esri/layers/GraphicsLayer",
+  "esri/geometry/Polyline"
+],
   (
-    Map,
     FeatureLayer,
     ImageryLayer,
     GraphicsLayer,
-    Basemap,
-    SceneView,
-    BasemapGallery,
-    Expand,
-    Search,
-    LayerList,
     Polyline
   ) => {
     // global vars
@@ -162,7 +160,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
       }
 
 
-      view.when((v) => {
+      view.when((_v) => {
         groundRayGraphic = getGroundRayGraphic(new Polyline({
           hasZ: true,
           spatialReference: { "latestWkid": 3857, "wkid": 102100 },
@@ -195,7 +193,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
         // connect zoom input
         zoomInput = document.getElementById("zoomInput");
         zoomInput.value = 6;
-        zoomInput.addEventListener("calciteInputNumberChange", (inp) => {
+        zoomInput.addEventListener("calciteInputNumberChange", (_inp) => {
           if (syncIssPosition === true) {
             updateCameraPosition(1, false);
           }
@@ -204,7 +202,7 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
         // connect tilt input
         tiltInput = document.getElementById("tiltInput");
         tiltInput.value = 40;
-        tiltInput.addEventListener("calciteInputNumberChange", (inp) => {
+        tiltInput.addEventListener("calciteInputNumberChange", (_inp) => {
           if (syncIssPosition === true) {
             updateCameraPosition(1, false);
           }
@@ -256,28 +254,6 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
         }
       });
 
-      const bgExpand = new Expand({
-        expandIcon: "basemap",
-        expandTooltip: "Basemap Gallery",
-        view: view,
-        content: new BasemapGallery({
-          view: view
-        })
-      })
-
-      const lyrExpand = new Expand({
-        expandIcon: "layers",
-        expandTooltip: "Layer List",
-        view: view,
-        content: new LayerList({
-          view: view
-        })
-      })
-
-      const searchWidget = new Search({
-        view: view
-      });
-
       syncSwitchDiv = document.createElement("div");
       syncSwitchDiv.id = "syncSwitchDiv";
       syncSwitchDiv.innerHTML = `<calcite-label id="syncSwitchLabel" layout="inline"><calcite-switch id="syncSwitch"></calcite-switch>Sync ISS position</calcite-label>
@@ -285,9 +261,10 @@ require(["esri/Map", "esri/layers/FeatureLayer", "esri/layers/ImageryLayer", "es
   <calcite-input-number id="zoomInput" step="1" min="1" max="15" maxLength="2" icon="zoom-to-object" alignment="end"></calcite-input-number>
   <calcite-input-number id="tiltInput" step="1" min="1" max="90" maxLength="2" icon="center-vertical" alignment="end"></calcite-input-number>`;
 
-      view.ui.add([syncSwitchDiv, searchWidget, bgExpand, lyrExpand],
+      view.ui.add(syncSwitchDiv,
         {
-          position: "top-right"
+          position: "top-right",
+          index: 0
         });
     }
   });
