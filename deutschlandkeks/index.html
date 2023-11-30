@@ -174,13 +174,15 @@
           });
 
           // create a GraphicsLayer to show the four points on the Map
-          const graphicsLayer = new GraphicsLayer({
+          const controlPointsLayer = new GraphicsLayer({
             graphics: [
               createGraphic(swCornerMapPoint, "green", 0),
               createGraphic(nwCornerMapPoint, "purple", 1),
               createGraphic(neCornerMapPoint, "blue", 2),
               createGraphic(seCornerMapPoint, "red", 3),
             ],
+            id: "controlPointsLayer",
+            title: "Control points"
           });
 
           // create an array of four control points composed of a sourcePoint, a point
@@ -228,7 +230,7 @@
 
           const mediaLayer = new MediaLayer({
             source: [imageElement],
-            title: "Deutschlandkeks",
+            title: "Deutschlandkeks Media",
             copyright: "Bundesamt für Kartographie und Geodäsie, 2023",
             spatialReference,
           });
@@ -252,17 +254,20 @@
             definitionExpression: "COUNTRY='Germany'",
             blendMode: "destination-in",
             listMode: "hide",
+            title: "Deutschland"
           });
 
           const groupLayer = new GroupLayer({
             layers: [mediaLayer, countryFl],
             blendMode: "multiply",
+            title: "Deutschlandkeks",
+            listMode: "hide-children"
           });
 
-          map.layers.addMany([groupLayer, graphicsLayer]);
+          map.layers.addMany([groupLayer, controlPointsLayer]);
 
           // use the SketchViewModel to allow updating the graphics and control points
-          sketch.layer = graphicsLayer;
+          sketch.layer = controlPointsLayer;
 
           sketch.on("update", (event) => {
             if (event.toolEventInfo?.type === "move-start") {
@@ -273,21 +278,21 @@
             }
 
             updateGeoreference(
-              graphicsLayer.graphics,
+              controlPointsLayer.graphics,
               controlPointsGeoreference
             );
           });
 
           sketch.on("redo", () => {
             updateGeoreference(
-              graphicsLayer.graphics,
+              controlPointsLayer.graphics,
               controlPointsGeoreference
             );
           });
 
           sketch.on("undo", () => {
             updateGeoreference(
-              graphicsLayer.graphics,
+              controlPointsLayer.graphics,
               controlPointsGeoreference
             );
           });
