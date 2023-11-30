@@ -113,7 +113,7 @@
             ymax: 7449476.326350417,
           },
         });
-        view.watch("extent", (e) => console.log(JSON.stringify(e)));
+        // view.watch("extent", (e) => console.log(JSON.stringify(e)));
 
         const search = new Search({ view: view });
         view.ui.add(search, "top-right");
@@ -131,11 +131,11 @@
           updateOnGraphicClick: true,
           view,
         });
-        sketch.on("update", (u) => {
-          if (u.state === "complete") {
-            console.log(JSON.stringify(u.graphics[0].geometry));
-          }
-        });
+        // sketch.on("update", (u) => {
+        //   if (u.state === "complete") {
+        //     console.log(JSON.stringify(u.graphics[0].geometry));
+        //   }
+        // });
 
         const addDeutschlandkeksMediaLayer = async () => {
           // set view scale constraints
