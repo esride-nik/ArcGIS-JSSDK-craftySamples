@@ -38,8 +38,7 @@
         "esri/symbols/SimpleMarkerSymbol",
         "esri/Viewpoint",
         "esri/views/MapView",
-        "esri/webmap/Bookmark",
-        "esri/widgets/Bookmarks",
+        "esri/widgets/BasemapGallery",
         "esri/widgets/Expand",
         "esri/widgets/Search",
         "esri/widgets/Sketch/SketchViewModel",
@@ -57,8 +56,7 @@
         SimpleMarkerSymbol,
         Viewpoint,
         MapView,
-        Bookmark,
-        Bookmarks,
+        BasemapGallery,
         Expand,
         Search,
         SketchViewModel
@@ -96,25 +94,37 @@
         };
 
         const map = new Map({
-          basemap: "topo-vector",
-        });
-        const zoom = 12;
-
-        const view = new MapView({
-          container: "viewDiv",
-          map,
-          zoom,
-          extent: {
-            spatialReference: { latestWkid: 3857, wkid: 102100 },
-            xmin: -278930.05173594714,
-            ymin: 5825636.363342965,
-            xmax: 2592656.2268807907,
-            ymax: 7525595.872404832,
+          basemap: {
+            portalItem: {
+              id: "4f0d421553de4e3197b04ce9ce186a90",
+            },
           },
         });
 
+        const spatialReference = new SpatialReference({ wkid: 102100 });
+        const view = new MapView({
+          container: "viewDiv",
+          map,
+          extent: {
+            spatialReference: spatialReference,
+            xmin: -257793.69841675786,
+            ymin: 5749516.81728855,
+            xmax: 2613792.58019998,
+            ymax: 7449476.326350417,
+          },
+        });
+        view.watch("extent", (e) => console.log(JSON.stringify(e)));
+
         const search = new Search({ view: view });
         view.ui.add(search, "top-right");
+
+        const basemapGallery = new BasemapGallery({ view: view });
+        const bgExpand = new Expand({
+          expandIcon: "basemap",
+          view: view,
+          content: basemapGallery,
+        });
+        view.ui.add(bgExpand, "top-right");
 
         // use the SketchViewModel to allow updating the graphics and control points
         const sketch = new SketchViewModel({
@@ -133,7 +143,6 @@
           view.constraints.minScale = 100000000;
 
           // four points representing known map coordinates on the MediaLayer's ImageElement
-          const spatialReference = new SpatialReference({ wkid: 102100 });
           const swCornerMapPoint = new Point({
             x: 617278.7279272052,
             y: 5778673.423306355,
