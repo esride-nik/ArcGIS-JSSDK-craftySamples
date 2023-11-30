@@ -122,10 +122,10 @@
           view,
         });
         sketch.on("update", (u) => {
-            if (u.state === "complete") {
-                console.log(JSON.stringify(u.graphics[0].geometry))
-            }
-        })
+          if (u.state === "complete") {
+            console.log(JSON.stringify(u.graphics[0].geometry));
+          }
+        });
 
         const addDeutschlandkeksMediaLayer = async () => {
           // set view scale constraints
@@ -135,19 +135,23 @@
           // four points representing known map coordinates on the MediaLayer's ImageElement
           const spatialReference = new SpatialReference({ wkid: 102100 });
           const swCornerMapPoint = new Point({
-            "x":617278.7279272052,"y":5778673.423306355,
+            x: 617278.7279272052,
+            y: 5778673.423306355,
             spatialReference,
           });
           const nwCornerMapPoint = new Point({
-            "x":574229.6026045051,"y":7392534.159204069,
+            x: 574229.6026045051,
+            y: 7392534.159204069,
             spatialReference,
           });
           const neCornerMapPoint = new Point({
-            "x":1702317.2735420805,"y":7484503.281211413,
+            x: 1702317.2735420805,
+            y: 7484503.281211413,
             spatialReference,
           });
           const seCornerMapPoint = new Point({
-            "x":1762978.2664952497,"y":5837376.463865069,
+            x: 1762978.2664952497,
+            y: 5837376.463865069,
             spatialReference,
           });
 
@@ -209,7 +213,7 @@
             title: "Deutschlandkeks",
             copyright: "Bundesamt für Kartographie und Geodäsie, 2023",
             spatialReference,
-            blendMode: "multiply"
+            blendMode: "multiply",
           });
 
           map.layers.addMany([mediaLayer, graphicsLayer]);
