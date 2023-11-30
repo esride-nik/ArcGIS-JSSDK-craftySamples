@@ -100,53 +100,7 @@
           zoom
         });
 
-        // create bookmarks for Telluride and Denver
-        const tellurideBookmark = new Bookmark({
-          name: "Telluride Geology",
-          viewpoint: new Viewpoint({
-            targetGeometry: tellurideCenter,
-            scale: 100000
-          })
-        });
-
-        const denverBookmark = new Bookmark({
-          name: "Sanborn Fire Insurance Map from Denver (1887)",
-          viewpoint: new Viewpoint({
-            targetGeometry: denverCenter,
-            scale: 2500
-          })
-        });
-
-        const bookmarksCollection = new Collection();
-        bookmarksCollection.addMany([tellurideBookmark, denverBookmark]);
-
-        // add a Bookmarks widget
-        const bookmarks = new Bookmarks({
-          bookmarks: bookmarksCollection,
-          view
-        });
-
-        const bookmarksExpand = new Expand({
-          content: bookmarks,
-          expanded: true,
-          view
-        });
-        view.ui.add(bookmarksExpand, "top-right");
-
-
-        // when a bookmark is selected add the appropriate MediaLayer
-        bookmarks.on("bookmark-select", (event) => {
-          if (event.bookmark.name === "Telluride Geology") {
-            map.removeAll();
-            addTellurideGeologyMediaLayer();
-          }
-
-          if (event.bookmark.name === "Sanborn Fire Insurance Map from Denver (1887)") {
-            map.removeAll();
-            addDenverInsuranceMediaLayer();
-          }
-        });
-
+        view.watch("camera", (c) => console.log(c))
 
         // use the SketchViewModel to allow updating the graphics and control points
         const sketch = new SketchViewModel({
@@ -154,7 +108,7 @@
           view
         });
 
-        const addTellurideGeologyMediaLayer = async () => {
+        const addDeutschlandkeksMediaLayer = async () => {
           // set view scale constraints
           view.constraints.maxScale = 10000;
           view.constraints.minScale = 1000000;
@@ -207,21 +161,19 @@
           ];
 
 
-
           // georeference for the imageElement using the control points,
           // image width, and image height
           const controlPointsGeoreference = new ControlPointsGeoreference({ controlPoints, width: 1585, height: 2048 });
 
           const imageElement = new ImageElement({
-            image:
-              "https://arcgis.github.io/arcgis-samples-javascript/sample-data/media-layer/telluride/TellurideQuad.webp",
+            image: "./deutschlandkeks/deutschlandkeks.jpg",
             georeference: controlPointsGeoreference
           });
 
           const mediaLayer = new MediaLayer({
             source: [imageElement],
-            title: "Geologic Map of the Telluride Quadrangle, Southwestern Colorado",
-            copyright: "Wilbur S Burbank and Robert G. Luedke, 1966",
+            title: "Deutschlandkeks",
+            copyright: "Bundesamt für Kartographie und Geodäsie, 2023",
             spatialReference
           });
 
@@ -257,100 +209,8 @@
           view.goTo(mediaLayer.fullExtent);
         };
 
-        const addDenverInsuranceMediaLayer = async () => {
-          // set view scale constraints
-          view.constraints.maxScale = 500;
-          view.constraints.minScale = 50000;
-
-          // four points representing known map coordinates on the MediaLayer's ImageElement
-          const swCornerMapPoint = new Point({ x: -104.98621754464038, y: 39.74613888637972 });
-          const nwCornerMapPoint = new Point({ x: -104.98869072957527, y: 39.747982021406564 });
-          const neCornerMapPoint = new Point({ x: -104.98622558569664, y: 39.749857357393935 });
-          const seCornerMapPoint = new Point({ x: -104.98353115392514, y: 39.74749717720185 });
-
-          // create a GraphicsLayer to show the four points on the Map
-          const graphicsLayer = new GraphicsLayer({
-            graphics: [
-              createGraphic(swCornerMapPoint, "green", 0),
-              createGraphic(nwCornerMapPoint, "purple", 1),
-              createGraphic(neCornerMapPoint, "blue", 2),
-              createGraphic(seCornerMapPoint, "red", 3)
-            ]
-          });
-
-          // create an array of four control points composed of a sourcePoint, a point
-          // on the image element in pixels, and a mapPoint which is the location of the
-          // sourcePoint in map space
-          const swCornerControlPoint = {
-            sourcePoint: { x: 125, y: 1634 },
-            mapPoint: swCornerMapPoint
-          };
-
-          const nwCornerControlPoint = {
-            sourcePoint: { x: 125, y: 63 },
-            mapPoint: nwCornerMapPoint
-          };
-
-          const neCornerControlPoint = {
-            sourcePoint: { x: 1639, y: 55 },
-            mapPoint: neCornerMapPoint
-          };
-
-          const seCornerControlPoint = {
-            sourcePoint: { x: 1591, y: 1994 },
-            mapPoint: seCornerMapPoint
-          };
-
-          const controlPoints = [
-            swCornerControlPoint,
-            nwCornerControlPoint,
-            neCornerControlPoint,
-            seCornerControlPoint
-          ];
-
-          // georeference for the imageElement using the control points,
-          // image width, and image height
-          const controlPointsGeoreference = new ControlPointsGeoreference({ controlPoints, width: 1691, height: 2048 });
-
-          const imageElement = new ImageElement({
-            image:
-              "http://arcgis.github.io/arcgis-samples-javascript/sample-data/media-layer/denver/DenverFireInsurance.webp",
-            georeference: controlPointsGeoreference
-          });
-
-          const mediaLayer = new MediaLayer({
-            source: [imageElement],
-            title: "Sanborn Fire Insurance Map from Denver (1887)",
-            copyright: "United States Library of Congress's Geography & Map Division"
-          });
-
-          map.layers.addMany([mediaLayer, graphicsLayer]);
-
-          // use the SketchViewModel to allow updating the graphics and control points
-          sketch.layer = graphicsLayer;
-
-          sketch.on("update", (event) => {
-            if (event.toolEventInfo?.type === "move-start") {
-              imageElement.opacity = 0.3;
-            }
-            if (event.toolEventInfo?.type === "move-stop") {
-              imageElement.opacity = 0.9;
-            }
-
-            updateGeoreference(graphicsLayer.graphics, controlPointsGeoreference);
-          });
-
-          sketch.on("redo", () => {
-            updateGeoreference(graphicsLayer.graphics, controlPointsGeoreference);
-          });
-
-          sketch.on("undo", () => {
-            updateGeoreference(graphicsLayer.graphics, controlPointsGeoreference);
-          });
-        };
-
         // when the web page first loads add the Telluride geology map
-        addTellurideGeologyMediaLayer();
+        addDeutschlandkeksMediaLayer();
       });
     </script>
   </head>
