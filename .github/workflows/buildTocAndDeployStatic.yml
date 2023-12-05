@@ -38,12 +38,11 @@ jobs:
       - name: List files in the repository
         id: dir_list
         run: |
-          echo -n '['
-          for FILE in $(ls ${{ github.workspace }} | sed -e 's/"/\\"/g')
-          do
-          echo -n \"${FILE}\",
-          done
-          echo -en \\b']'
+          {
+            echo 'dir_list<<EOF'
+            ls ${{ github.workspace }} 
+            echo EOF
+          } >> "$GITHUB_ENV"
 
       - name: Overwrite file
         uses: "DamianReeves/write-file-action@master"
@@ -63,7 +62,7 @@ jobs:
                 <link rel="stylesheet" href="styles.css">
                 <title>Nik's crafty samples - table of contents</title>
                 <script>
-                  console.log('DIR LIST OUTPUT', ${{ fromJSON(steps.dir_list) }})
+                  console.log('DIR LIST OUTPUT', ${{ steps.dir_list }})
                 </script>
             </head>
             <body>
