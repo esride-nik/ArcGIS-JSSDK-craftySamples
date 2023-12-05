@@ -46,7 +46,7 @@ jobs:
           path: index.html
           write-mode: overwrite 
           contents: |
-            console.log('some contents', ${{ github.workspace }})    
+            ${{ steps.dir_list }}
             
       - name: Commit & Push
         uses: actions-js/push@master
