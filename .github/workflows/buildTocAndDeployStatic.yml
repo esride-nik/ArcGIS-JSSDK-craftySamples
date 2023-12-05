@@ -38,7 +38,7 @@ jobs:
       - name: List files in the repository
         id: dir_list
         run: |
-          ls -xm ${{ github.workspace }}
+          ls ${{ github.workspace }}
 
       - name: Overwrite file
         uses: "DamianReeves/write-file-action@master"
@@ -59,6 +59,8 @@ jobs:
                 <title>Nik's crafty samples - table of contents</title>
                 <script>
                   console.log('DIR LIST OUTPUT', ${{ steps.dir_list }})
+                  console.log('DIR LIST OUTPUT', ${{ steps.dir_list.outputs }})
+                  console.log('DIR LIST OUTPUT', ${{ steps.dir_list.outputs.* }})
                 </script>
             </head>
             <body>
