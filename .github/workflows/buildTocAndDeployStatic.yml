@@ -63,7 +63,7 @@ jobs:
                 <link rel="stylesheet" href="styles.css">
                 <title>Nik's crafty samples - table of contents</title>
                 <script>
-                  console.log('DIR LIST OUTPUT', ${{ steps.dir_list }})
+                  console.log('DIR LIST OUTPUT', ${{ fromJSON(steps.dir_list) }})
                 </script>
             </head>
             <body>
