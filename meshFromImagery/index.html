@@ -1,0 +1,45 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>LayerList widget to web components (next)</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/next/esri/themes/dark/main.css" />
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/next"></script>
+
+    <!-- Load Map Components from CDN-->
+    <script type="module" src="https://js.arcgis.com/map-components/next/arcgis-map-components.esm.js"></script>
+    
+  </head>
+
+  <body class="calcite"> 
+    <arcgis-scene item-id="fad07230ec044763a74d1afeb66b8763">
+      <arcgis-expand position="bottom-right">
+        <arcgis-layer-list />
+      </arcgis-expand>
+      <arcgis-expand position="bottom-right">
+        <arcgis-legend />
+      </arcgis-expand>
+      <arcgis-expand position="bottom-right">
+        <arcgis-search />
+      </arcgis-expand>
+
+      <arcgis-home position="top-left" />
+    </arcgis-scene>
+    
+    <script src="meshFromImagery.js"></script>
+  </body>
+</html>
