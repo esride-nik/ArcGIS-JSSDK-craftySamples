@@ -31,6 +31,13 @@
             "name": "LayerList 2 WebComponents",
             "url": "http://localhost:8080",
             "file": "${workspaceFolder}/webcomponents_LayerList/index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Mesh from Imagery",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/meshFromImagery/index.html"
         }
     ]
 }
