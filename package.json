@@ -4,7 +4,8 @@
   "description": "Crafty samples for the ArcGIS Maps SDK for JavaScript. Mostly adjustments of pre-existing samples.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "chmod +x scripts/install-hooks.sh && ./scripts/install-hooks.sh"
   },
   "repository": {
     "type": "git",
