@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Run the TOC update script
+bash ./scripts/update-toc.sh
+
+# Check if the script succeeded
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to update Table of Contents"
+    exit 1
+fi
+
+exit 0
