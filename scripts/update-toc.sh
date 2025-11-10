@@ -61,7 +61,7 @@ for dir in */; do
         dirname=${dir%/}
         # Create a human-readable title
         title=$(echo "$dirname" | sed -E 's/([A-Z])/ \1/g' | sed -E 's/^./\U&/g' | sed -E 's/_/ /g')
-        echo "            <li><a href=\"$dir\" target="_blank">$title</a></li>" >> "$TMP_FILE"
+        echo "            <li><a href=\"$dir\" target=\"_blank\">$title</a></li>" >> "$TMP_FILE"
     fi
 done
 
