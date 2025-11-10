@@ -35,7 +35,8 @@ require([
     // set the geographic location of the video file on the map using an extent
     const vElement = new VideoElement({
         //   video: "https://arcgis.github.io/arcgis-samples-javascript/sample-data/media-layer/videos/hurricanes_aerosol-aug.mp4",
-        video: "./hurricanes_aerosol-aug.mp4",
+        // video: "./hurricanes_aerosol-aug.mp4",
+        video: "./757eff0c-9cfe-41aa-88ce-f32fb3956289.MP4",
         georeference: new ExtentAndRotationGeoreference({
             extent: new Extent({
                 xmin: -150,
