@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "chmod +x scripts/install-hooks.sh && ./scripts/install-hooks.sh"
+    "prepare": "node ./scripts/install-hooks.js",
+    "start": "npx http-server ./ -c-1 -o"
   },
   "repository": {
     "type": "git",
