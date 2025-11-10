@@ -134,7 +134,7 @@ require([
 
     // adding imagery layers via URLs or AGO item IDs
     const operationalIlProps = [
-      { portalItem: { id: "00873877644147a9868fd622cf601eab" }, id: "seaSurface", visible: false },
+      // { portalItem: { id: "00873877644147a9868fd622cf601eab" }, id: "seaSurface", visible: false },
       { portalItem: { id: "fe200cff94624a938b042d68beeaa13a" }, id: "landCover20180", visible: false }
       ,
       { portalItem: { id: "cee96e0ada6541d0bd3d67f3f8b5ce63" }, id: "landCover2050", visible: false }
