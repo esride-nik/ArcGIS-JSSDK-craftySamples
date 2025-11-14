@@ -38,23 +38,34 @@
     <calcite-shell>
       <arcgis-map basemap="dark-gray" center="8.677242939823607, 50.10735208625505" zoom="17">
         <arcgis-layer-list slot="top-right"></arcgis-layer-list>
+        <arcgis-zoom slot="top-right"></arcgis-zoom>
+        <div
+          id="notice-div"
+          slot="bottom-start">
+          <calcite-notice
+            open="false"
+            id="flvAlert"
+            label="FeatureLayerView query results"
+            scale="l"
+            width="auto"
+            kind="info"
+            icon="3d-glasses"
+          >
+            <div slot="message" id="flvAlertMsg"></div>
+          </calcite-notice>
+          <calcite-notice
+            open="false"
+            id="flAlert"
+            label="FeatureLayer query results"
+            scale="l"
+            width="auto"
+            kind="info"
+            icon="feature-layer"
+          >
+            <div slot="message" id="flAlertMsg"></div>
+          </calcite-notice>
+        </div>
       </arcgis-map>
-      <calcite-alert
-        open="false"
-        id="flvAlert"
-        label="FeatureLayerView query results"
-        scale="l"
-      >
-        <div slot="title" id="flvAlertMsg"></div>
-      </calcite-alert>
-      <calcite-alert
-        open="false"
-        id="flAlert"
-        label="FeatureLayer query results"
-        scale="l"
-      >
-        <div slot="title" id="flAlertMsg"></div>
-      </calcite-alert>
     </calcite-shell>
     
     <script type="module">
@@ -75,18 +86,17 @@
         let resultSet;
         let i = 1;
         let featureCount = 0;
+        const flAlertMsg = document.getElementById("flAlertMsg");
         do {
           query.start = featureCount;
           resultSet = await layer.queryFeatures(query);
           lResults = [...lResults, ...resultSet.features];
           featureCount += resultSet.features.length;
-          console.log(
-            `Iteration ${i} received ${
+          flAlertMsg.textContent = `Iteration ${i} received ${
               resultSet.features.length
-            } features from layer. ${featureCount} features in total. Transfer limit ${
+            } features with '${whereClause}' from layer. ${featureCount} features in total. Transfer limit ${
               resultSet.exceededTransferLimit ? "exceeded" : "not exceeded"
-            }.`
-          );
+            }.`;
           i++;
         } while (resultSet.exceededTransferLimit);
         return lResults;
@@ -117,7 +127,7 @@
       map.add(treesFl);
       
       // define same where clause for both queries
-      const whereClause = "BAUMHOEHE > 5";
+      const whereClause = "BAUMHOEHE > 6";
 
       // query feature layer view (when ready)
       const layerView = await viewElement.whenLayerView(treesFl);
@@ -143,12 +153,7 @@
       );
 
       // query feature layer
-      const lData = await queryLayer(treesFl, whereClause);
-      console.log(`${lData.length} features with '${whereClause}' on layer`);
-      const flAlert = document.getElementById("flAlert");
-      flAlert.open = true;
-      const flAlertMsg = document.getElementById("flAlertMsg");
-      flAlertMsg.textContent = `\n${lData.length} features with '${whereClause}' on layer.\n`;
+      const lData = queryLayer(treesFl, whereClause);
 
     </script>
   </body>
