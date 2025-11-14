@@ -8,13 +8,10 @@
 
     <title>Query FeatureLayer vs. FeatureLayerView</title>
 
-    <!-- Load the Chart.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-
-    <link
-      rel="stylesheet"
-      href="https://js.arcgis.com/4.28/esri/themes/light/main.css"
-    />
+    <script type="module" src="https://js.arcgis.com/calcite-components/3.3.3/calcite.esm.js"></script>
+    <script src="https://js.arcgis.com/4.34/"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css" />
+    <script type="module" src="https://js.arcgis.com/4.34/map-components"></script>
 
     <style>
       html,
@@ -35,158 +32,20 @@
       }
     </style>
 
-    <script src="https://js.arcgis.com/4.28/"></script>
-    <script
-      type="module"
-      src="https://js.arcgis.com/calcite-components/1.9.2/calcite.esm.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://js.arcgis.com/calcite-components/1.9.2/calcite.css"
-    />
-
-    <script>
-      require([
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/layers/FeatureLayer",
-        "esri/widgets/LayerList",
-        "esri/core/reactiveUtils",
-      ], function (Map, MapView, FeatureLayer, LayerList, reactiveUtils) {
-        // Load a web map in a 2D MapView
-        const map = new Map({
-          basemap: "dark-gray-vector",
-        });
-
-        const treesFl = new FeatureLayer({
-          id: "trees",
-          url: "https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/Baumkataster_Berlin/FeatureServer/0",
-          outFields: ["*"],
-        });
-
-        map.add(treesFl);
-
-        const view = new MapView({
-          container: "viewDiv",
-          map: map,
-          popup: {
-            dockEnabled: true,
-            dockOptions: {
-              breakpoint: false,
-            },
-          },
-          extent: {
-            spatialReference: { latestWkid: 3857, wkid: 102100 },
-            xmin: 1513123.5253616376,
-            ymin: 6892900.118184648,
-            xmax: 1522295.9687558464,
-            ymax: 6897462.453310413,
-          },
-        });
-
-        // When the view loads, set up UI elements
-        let layerList;
-
-        view.when(() => {
-          view.whenLayerView(treesFl).then((layerView) => {
-            reactiveUtils.when(
-              () => !layerView.dataUpdating,
-              async () => {
-                // define same where clause for both queries
-                const whereClause = "baumhoehe > 21";
-
-                // query feature layer view
-                const lvData = await queryLayerView(layerView, whereClause);
-                console.log(`${lvData.features.length} features with '${whereClause}' on layer view`);
-                const flvAlert = document.getElementById("flvAlert");
-                flvAlert.open = true;
-                const flvAlertMsg = document.getElementById("flvAlertMsg");
-                flvAlertMsg.textContent = `\n${lvData.features.length} features with '${whereClause}' on layer view.\n`;
-
-                // apply visual effect
-                featureFilter = {
-                  objectIds: lvData.features.map((f) => f.attributes.OBJECTID),
-                };
-                layerView.featureEffect = {
-                  filter: featureFilter,
-                  includedEffect: "bloom(800%, 1px, 0.2) hue-rotate(100deg)",
-                };
-
-                // query feature layer
-                const lData = await queryLayer(treesFl, whereClause);
-                console.log(`${lData.length} features with '${whereClause}' on layer`);
-                const flAlert = document.getElementById("flAlert");
-                flAlert.open = true;
-                const flAlertMsg = document.getElementById("flAlertMsg");
-                flAlertMsg.textContent = `\n${lData.length} features with '${whereClause}' on layer.\n`;
-              }
-            );
-          });
-
-          // Add a LayerList instance to the view
-          layerList = new LayerList({
-            view: view,
-            listItemCreatedFunction: function (event) {
-              const item = event.item;
-            },
-          });
-          view.ui.add(layerList, "top-right");
-        });
-
-        // Query the layer view
-        const queryLayerView = async (layerView, whereClause) => {
-          // query statistics for features only in view extent
-          const query = layerView.createQuery();
-          query.where = whereClause;
-
-          // query features within the view's extent on the client
-          const lvResults = await layerView.queryFeatures(query);
-          return lvResults;
-        };
-
-        // Query the layer
-        const queryLayer = async (layer, whereClause) => {
-          // query statistics for features only in view extent
-          const query = layer.createQuery();
-          query.where = whereClause;
-          query.num = 2000;
-
-          // query features within the view's extent on the client
-          let lResults = [];
-          let resultSet;
-          let i = 1;
-          let featureCount = 0;
-          do {
-            query.start = featureCount;
-            resultSet = await layer.queryFeatures(query);
-            lResults = [...lResults, ...resultSet.features];
-            featureCount += resultSet.features.length;
-            console.log(
-              `Iteration ${i} received ${
-                resultSet.features.length
-              } features from layer. ${featureCount} features in total. Transfer limit ${
-                resultSet.exceededTransferLimit ? "exceeded" : "not exceeded"
-              }.`
-            );
-            i++;
-          } while (resultSet.exceededTransferLimit);
-          return lResults;
-        };
-      });
-    </script>
   </head>
 
   <body>
     <calcite-shell>
-      <div id="viewDiv"></div>
+      <arcgis-map basemap="dark-gray" center="8.677242939823607, 50.10735208625505" zoom="17">
+        <arcgis-layer-list slot="top-right"></arcgis-layer-list>
+      </arcgis-map>
       <calcite-alert
         open="false"
         id="flvAlert"
         label="FeatureLayerView query results"
         scale="l"
       >
-        <div slot="title" id="flvAlertMsg">no no no</div>
+        <div slot="title" id="flvAlertMsg"></div>
       </calcite-alert>
       <calcite-alert
         open="false"
@@ -194,8 +53,103 @@
         label="FeatureLayer query results"
         scale="l"
       >
-        <div slot="title" id="flAlertMsg">no no no</div>
+        <div slot="title" id="flAlertMsg"></div>
       </calcite-alert>
     </calcite-shell>
+    
+    <script type="module">
+      const [FeatureLayer, reactiveUtils] = await $arcgis.import([
+        "@arcgis/core/layers/FeatureLayer.js",
+        "@arcgis/core/core/reactiveUtils.js",
+      ]);
+
+      // Query layer function
+      const queryLayer = async (layer, whereClause) => {
+        // query statistics for features only in view extent
+        const query = layer.createQuery();
+        query.where = whereClause;
+        query.num = 2000;
+
+        // query features within the view's extent on the client
+        let lResults = [];
+        let resultSet;
+        let i = 1;
+        let featureCount = 0;
+        do {
+          query.start = featureCount;
+          resultSet = await layer.queryFeatures(query);
+          lResults = [...lResults, ...resultSet.features];
+          featureCount += resultSet.features.length;
+          console.log(
+            `Iteration ${i} received ${
+              resultSet.features.length
+            } features from layer. ${featureCount} features in total. Transfer limit ${
+              resultSet.exceededTransferLimit ? "exceeded" : "not exceeded"
+            }.`
+          );
+          i++;
+        } while (resultSet.exceededTransferLimit);
+        return lResults;
+      };
+      
+      // Query layer view function
+      const queryLayerView = async (layerView, whereClause) => {
+        // query statistics for features only in view extent
+        const query = layerView.createQuery();
+        query.where = whereClause;
+
+        // query features within the view's extent on the client
+        const lvResults = await layerView.queryFeatures(query);
+        return lvResults;
+      };
+
+      // Get reference to map
+      const viewElement = document.querySelector("arcgis-map");
+      // Wait for the map to be ready before adding anything
+      await viewElement.viewOnReady();
+      const map = viewElement.map;
+
+      const treesFl = new FeatureLayer({
+        id: "trees",
+        url: "https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/FFM_Baumkataster/FeatureServer/0",
+        outFields: ["*"],
+      });
+      map.add(treesFl);
+      
+      // define same where clause for both queries
+      const whereClause = "BAUMHOEHE > 5";
+
+      // query feature layer view (when ready)
+      const layerView = await viewElement.whenLayerView(treesFl);
+      reactiveUtils.when(
+        () => !layerView.dataUpdating,
+        async () => {
+          const lvData = await queryLayerView(layerView, whereClause);
+          console.log(`${lvData.features.length} features with '${whereClause}' on layer view`);
+          const flvAlert = document.getElementById("flvAlert");
+          flvAlert.open = true;
+          const flvAlertMsg = document.getElementById("flvAlertMsg");
+          flvAlertMsg.textContent = `\n${lvData.features.length} features with '${whereClause}' on layer view.\n`;
+
+          // apply visual effect
+          const featureFilter = {
+            objectIds: lvData.features.map((f) => f.attributes.OBJECTID),
+          };
+          layerView.featureEffect = {
+            filter: featureFilter,
+            includedEffect: "bloom(800%, 1px, 0.2) hue-rotate(100deg)",
+          };
+        }
+      );
+
+      // query feature layer
+      const lData = await queryLayer(treesFl, whereClause);
+      console.log(`${lData.length} features with '${whereClause}' on layer`);
+      const flAlert = document.getElementById("flAlert");
+      flAlert.open = true;
+      const flAlertMsg = document.getElementById("flAlertMsg");
+      flAlertMsg.textContent = `\n${lData.length} features with '${whereClause}' on layer.\n`;
+
+    </script>
   </body>
 </html>
