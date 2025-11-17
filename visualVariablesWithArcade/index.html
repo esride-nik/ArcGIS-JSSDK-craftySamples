@@ -23,6 +23,12 @@
       src="https://js.arcgis.com/4.34/map-components/"
     ></script>
 
+    <!-- Arcade expression to make temperature human readable -->
+    <script type="text/plain" id="fahrenheit-to-celsius">
+      var tempFahrenheit = $feature.TEMP;
+      return (tempFahrenheit - 32) / 1.8;
+    </script>
+
     <style>
       html,
       body {
@@ -33,8 +39,7 @@
   </head>
 
   <body>
-    <arcgis-map item-id="eb3dcfc233bb4d95b79533b5eda03c14">
-      <!-- basemap="dark-gray" center="8.677242939823607, 50.10735208625505" zoom="5"> -->
+    <arcgis-map item-id="ba223f982a3c4a0ea8c9953346e2a201" center="8.677242939823607, 50.10735208625505" zoom="3">
       <arcgis-zoom slot="top-left"></arcgis-zoom>
       <arcgis-layer-list slot="top-right"></arcgis-layer-list>
       <arcgis-legend slot="bottom-left"></arcgis-legend>
@@ -180,13 +185,8 @@
         title: "Current weather conditions",
         renderer: renderer,
       });
-      view.map.add(layer);
-      view.ui.add(
-        new Legend({
-          view: view,
-        }),
-        "bottom-right"
-      );
+
+      map.add(layer);
     </script>
   </body>
 </html>
