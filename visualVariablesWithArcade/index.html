@@ -1,18 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
     <title>Intro to layers | Sample | ArcGIS Maps SDK for JavaScript</title>
 
     <!-- Load Calcite components from CDN -->
-    <script type="module" src="https://js.arcgis.com/calcite-components/3.3.3/calcite.esm.js"></script>
+    <script
+      type="module"
+      src="https://js.arcgis.com/calcite-components/3.3.3/calcite.esm.js"
+    ></script>
 
     <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
     <script src="https://js.arcgis.com/4.34/"></script>
 
     <!-- Load Map components from CDN-->
-    <script type="module" src="https://js.arcgis.com/4.34/map-components/"></script>
+    <script
+      type="module"
+      src="https://js.arcgis.com/4.34/map-components/"
+    ></script>
 
     <style>
       html,
@@ -24,7 +33,8 @@
   </head>
 
   <body>
-    <arcgis-map id="ba223f982a3c4a0ea8c9953346e2a201">
+    <arcgis-map item-id="eb3dcfc233bb4d95b79533b5eda03c14">
+      <!-- basemap="dark-gray" center="8.677242939823607, 50.10735208625505" zoom="5"> -->
       <arcgis-zoom slot="top-left"></arcgis-zoom>
       <arcgis-layer-list slot="top-right"></arcgis-layer-list>
       <arcgis-legend slot="bottom-left"></arcgis-legend>
@@ -35,57 +45,148 @@
       const [Map, FeatureLayer, PopupTemplate] = await $arcgis.import([
         "@arcgis/core/Map.js",
         "@arcgis/core/layers/FeatureLayer.js",
-        "@arcgis/core/PopupTemplate.js"
+        "@arcgis/core/PopupTemplate.js",
       ]);
-      console.log("cmon");
 
-      // // Get reference to map
-      // const viewElement = document.querySelector("arcgis-map");
-      // // Wait for the map to be ready before adding anything
-      // await viewElement.viewOnReady();
-      // const map = viewElement.map;
+      // Get reference to map
+      const viewElement = document.querySelector("arcgis-map");
+      // Wait for the map to be ready before adding anything
+      await viewElement.viewOnReady();
+      const map = viewElement.map;
 
-//       // Reference the desired feature service in a FeatureLayer instance.
-//       const featureLayer = new FeatureLayer({
-//         // This shows carbon storage of trees at Warren Wilson College.
-//         url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
-//       });
+      // Create a renderer
+      const renderer = {
+        type: "simple", // SimpleRenderer()
+        //
+        //Apply arrow symbology
+        //
+        symbol: {
+          type: "simple-marker", // SimpleMarkerSymbol()
+          // Arrow marker
+          path: "M14.5,29 23.5,0 14.5,9 5.5,0z",
+          color: [150, 150, 150],
+          outline: {
+            color: [0, 0, 0, 0.15],
+            width: "1px",
+          },
+          angle: 180,
+          size: 15,
+        },
+        visualVariables: [],
+      };
 
-//       // Add the feature layer to your Map class.
-//       map.add(featureLayer);
+      //
+      // 3 visual variables:
+      //
 
-//       // Wait for the layer to be ready for use.
-//       await viewElement.whenLayerView(featureLayer);
+      // Define rotation variable - indicates wind direction
+      const visVarWindDir = {
+        type: "rotation",
+        field: "WIND_DIRECT",
+        rotationType: "geographic",
+      };
+      // renderer.visualVariables.push(visVarWindDir)
 
-//       // Use the component's goTo method to zoom to the layer. Pass
-//       // the options object to customize the transition. Await this
-//       // so that it doesn't conflict with the minScale constraint.
-//       await viewElement.goTo(featureLayer.fullExtent, { animate: true, duration: 2500 });
+      // Define size variable - indicates wind speed
+      const visVarWindSpeed = {
+        type: "size",
+        field: "WIND_SPEED",
+        stops: [
+          {
+            value: 0,
+            size: 4,
+          },
+          {
+            value: 20,
+            size: 12,
+          },
+          {
+            value: 60,
+            size: 40,
+          },
+        ],
+      };
+      // renderer.visualVariables.push(visVarWindSpeed)
 
-//       // Assign the FeatureLayer instance's fullExtent property to the
-//       // component's geometry property and set minScale. This constrains
-//       // the user's navigation to the layer's defined extent.
-//       viewElement.constraints = {
-//         geometry: featureLayer.fullExtent,
-//         minScale: 10000
-//       };
+      // Define color variable - indicates air temperature in °F
+      const visVarTempF = {
+        type: "color",
+        field: "TEMP",
+        stops: [
+          {
+            value: 20,
+            color: "#2b83ba",
+          },
+          {
+            value: 35,
+            color: "#abdda4",
+          },
+          {
+            value: 50,
+            color: "#ffffbf",
+          },
+          {
+            value: 65,
+            color: "#fdae61",
+          },
+          {
+            value: 80,
+            color: "#d7191c",
+          },
+        ],
+      };
+      //renderer.visualVariables.push(visVarTempF)
 
-//       // Assign the PopupTemplate instance to the layer's popupTemplate
-//       // property. This ensures your custom popup appears when selected.
-//       // Tree ID will be its title. It will also display all the
-//       // attributes added to the fieldInfos array.
-//       featureLayer.popupTemplate = new PopupTemplate({
-//         title: "Tree ID: {Tree_ID}",
-//         content: [
-//           {
-//             type: "fields",
-//             fieldInfos: [
-//               { fieldName: "Crown_Height", label: "Crown Height (Feet)" },
-//               { fieldName: "C_Storage", label: "Carbon Storage (kg)" }
-//             ]
-//           }
-//         ]
-//       });
+      // Define color variable - indicates air temperature in °C
+      const celsiusArcade = document.getElementById(
+        "fahrenheit-to-celsius"
+      ).text;
+      const visVarTempC = {
+        type: "color",
+        valueExpression: celsiusArcade,
+        valueExpressionTitle: "Air Temperature (°C)",
+        stops: [
+          {
+            value: -10,
+            color: "#2b83ba",
+          },
+          {
+            value: 0,
+            color: "#abdda4",
+          },
+          {
+            value: 10,
+            color: "#ffffbf",
+          },
+          {
+            value: 20,
+            color: "#fdae61",
+          },
+          {
+            value: 30,
+            color: "#d7191c",
+          },
+        ],
+      };
+      // renderer.visualVariables.push(visVarTempC)
+
+      //
+      // Set the renderer on the feature layer
+      //
+      const layer = new FeatureLayer({
+        portalItem: {
+          id: "cb1886ff0a9d4156ba4d2fadd7e8a139",
+        },
+        title: "Current weather conditions",
+        renderer: renderer,
+      });
+      view.map.add(layer);
+      view.ui.add(
+        new Legend({
+          view: view,
+        }),
+        "bottom-right"
+      );
     </script>
   </body>
 </html>
