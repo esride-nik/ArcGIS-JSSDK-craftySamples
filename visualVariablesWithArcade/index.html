@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Intro to layers | Sample | ArcGIS Maps SDK for JavaScript</title>
+
+    <!-- Load Calcite components from CDN -->
+    <script type="module" src="https://js.arcgis.com/calcite-components/3.3.3/calcite.esm.js"></script>
+
+    <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
+    <script src="https://js.arcgis.com/4.34/"></script>
+
+    <!-- Load Map components from CDN-->
+    <script type="module" src="https://js.arcgis.com/4.34/map-components/"></script>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <arcgis-map id="ba223f982a3c4a0ea8c9953346e2a201">
+      <arcgis-zoom slot="top-left"></arcgis-zoom>
+      <arcgis-layer-list slot="top-right"></arcgis-layer-list>
+      <arcgis-legend slot="bottom-left"></arcgis-legend>
+    </arcgis-map>
+
+    <script type="module">
+      // Import Map, FeatureLayer, and PopupTemplate classes from the CDN.
+      const [Map, FeatureLayer, PopupTemplate] = await $arcgis.import([
+        "@arcgis/core/Map.js",
+        "@arcgis/core/layers/FeatureLayer.js",
+        "@arcgis/core/PopupTemplate.js"
+      ]);
+      console.log("cmon");
+
+      // // Get reference to map
+      // const viewElement = document.querySelector("arcgis-map");
+      // // Wait for the map to be ready before adding anything
+      // await viewElement.viewOnReady();
+      // const map = viewElement.map;
+
+//       // Reference the desired feature service in a FeatureLayer instance.
+//       const featureLayer = new FeatureLayer({
+//         // This shows carbon storage of trees at Warren Wilson College.
+//         url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
+//       });
+
+//       // Add the feature layer to your Map class.
+//       map.add(featureLayer);
+
+//       // Wait for the layer to be ready for use.
+//       await viewElement.whenLayerView(featureLayer);
+
+//       // Use the component's goTo method to zoom to the layer. Pass
+//       // the options object to customize the transition. Await this
+//       // so that it doesn't conflict with the minScale constraint.
+//       await viewElement.goTo(featureLayer.fullExtent, { animate: true, duration: 2500 });
+
+//       // Assign the FeatureLayer instance's fullExtent property to the
+//       // component's geometry property and set minScale. This constrains
+//       // the user's navigation to the layer's defined extent.
+//       viewElement.constraints = {
+//         geometry: featureLayer.fullExtent,
+//         minScale: 10000
+//       };
+
+//       // Assign the PopupTemplate instance to the layer's popupTemplate
+//       // property. This ensures your custom popup appears when selected.
+//       // Tree ID will be its title. It will also display all the
+//       // attributes added to the fieldInfos array.
+//       featureLayer.popupTemplate = new PopupTemplate({
+//         title: "Tree ID: {Tree_ID}",
+//         content: [
+//           {
+//             type: "fields",
+//             fieldInfos: [
+//               { fieldName: "Crown_Height", label: "Crown Height (Feet)" },
+//               { fieldName: "C_Storage", label: "Carbon Storage (kg)" }
+//             ]
+//           }
+//         ]
+//       });
+    </script>
+  </body>
+</html>
