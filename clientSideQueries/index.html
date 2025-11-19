@@ -58,10 +58,15 @@
       }
     </style>
 
-    <script type="module" src="https://js.arcgis.com/calcite-components/3.0.3/calcite.esm.js"></script>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
-    <script src="https://js.arcgis.com/4.32/"></script>
-    <script type="module" src="https://js.arcgis.com/map-components/4.32/arcgis-map-components.esm.js"></script>
+    <script type="module" src="https://js.arcgis.com/calcite-components/3.3.3/calcite.esm.js"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.34/"></script>
+
+    <!-- Load Map components from CDN-->
+    <script
+      type="module"
+      src="https://js.arcgis.com/4.34/map-components/"
+    ></script>
   </head>
   <body>
     <calcite-shell content-behind>
@@ -127,8 +132,9 @@
         ]);
 
         const { map, view } = document.querySelector("arcgis-map");
-
-        const url = "https://services9.arcgis.com/N9p5hsImWXAccRNI/ArcGIS/rest/services/Nc2JKvYFoAEOFCG5JSI6/FeatureServer/1";
+        
+        // Bike accidents 2024
+        const url = "https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/Verkehrsunfaelle_2024/FeatureServer";
 
         const layer = new FeatureLayer({
           url,
@@ -141,7 +147,7 @@
               outline: null,
             },
           },
-          outFields: ["Deaths", "Confirmed"],
+          outFields: ["IstRad", "IstFuss"],
         });
         map.add(layer);
 
