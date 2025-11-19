@@ -167,7 +167,24 @@
             spatialRelationship: "contains",
             distance,
             units: "kilometers",
-            outFields: ["IstRad", "IstFuss"],
+            outStatistics: [
+              {
+                statisticType: "sum",
+                onStatisticField: "1",  // Expression will override this
+                outStatisticFieldName: "sum_bike_accidents",
+                statisticDefinition: {
+                  expression: "IIF($feature.IstRad == '1', 1, 0)"
+                }
+              },
+              {
+                statisticType: "sum",
+                onStatisticField: "1",  // Expression will override this
+                outStatisticFieldName: "sum_pedestrian_accidents",
+                statisticDefinition: {
+                  expression: "IIF($feature.IstFuss == '1', 1, 0)"
+                }
+              }
+            ],
             returnQueryGeometry: true,
           });
 
@@ -180,15 +197,7 @@
             await layer.queryFeatures(query);
 
           const { features, queryGeometry } = featureSet;
-          
-          // Calculate sums manually from string fields
-          let sum_bike_accidents = 0;
-          let sum_pedestrian_accidents = 0;
-          
-          features.forEach(feature => {
-            if (feature.attributes.IstRad === "1") sum_bike_accidents++;
-            if (feature.attributes.IstFuss === "1") sum_pedestrian_accidents++;
-          });
+          const { attributes: { sum_bike_accidents, sum_pedestrian_accidents } } = features[0];
 
           const formatter = new Intl.NumberFormat();
           const bikes = formatter.format(sum_bike_accidents);
