@@ -6,7 +6,7 @@
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
     />
-    <title>covid</title>
+    <title>Accidents 2024</title>
 
     <style>
       html,
@@ -75,7 +75,7 @@
           icon="image-layer"
           alt="Application logo"
           slot="logo"
-          heading="Client-side queries and analysis | Covid Cases"
+          heading="Client-side queries and analysis | Accidents 2024"
           description="2025 Esri Developer & Technology Summit"
         />
       </calcite-navigation>
@@ -91,7 +91,7 @@
           <calcite-block heading="Radius" open>
             <calcite-slider
               id="radius"
-              value="300"
+              value="100"
               label-handles
               label-ticks
               min="0"
@@ -103,12 +103,12 @@
           </calcite-block>
           <calcite-block heading="Statistics" open>
             <calcite-label>
-              Confirmed cases
-              <span id="cases">2000</span>
+              Bike accidents
+              <span id="bike">0</span>
             </calcite-label>
             <calcite-label>
-              Deaths
-              <span id="deaths">1000</span>
+              Pedestrian accidents
+              <span id="pedestrian">0</span>
             </calcite-label>
           </calcite-block>
           <calcite-notice open scale="s" slot="footer">
@@ -119,7 +119,7 @@
           </calcite-notice>
         </calcite-panel>
       </calcite-shell-panel>
-      <arcgis-map basemap="gray" zoom="4" center="-95,38">
+      <arcgis-map basemap="gray" zoom="6" center="13,53">
         <arcgis-zoom position="top-left"></arcgis-zoom>
       </arcgis-map>
     </calcite-shell>
@@ -133,7 +133,7 @@
 
         const { map, view } = document.querySelector("arcgis-map");
         
-        // Bike accidents 2024
+        // Accidents 2024
         const url = "https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/Verkehrsunfaelle_2024/FeatureServer";
 
         const layer = new FeatureLayer({
@@ -167,18 +167,7 @@
             spatialRelationship: "contains",
             distance,
             units: "kilometers",
-            outStatistics: [
-              {
-                onStatisticField: "Confirmed",
-                outStatisticFieldName: "sum_of_cases",
-                statisticType: "sum",
-              },
-              {
-                onStatisticField: "Deaths",
-                outStatisticFieldName: "sum_of_deaths",
-                statisticType: "sum",
-              },
-            ],
+            outFields: ["IstRad", "IstFuss"],
             returnQueryGeometry: true,
           });
 
@@ -191,14 +180,22 @@
             await layer.queryFeatures(query);
 
           const { features, queryGeometry } = featureSet;
-          const { attributes: { sum_of_cases, sum_of_deaths } } = features[0];
+          
+          // Calculate sums manually from string fields
+          let sum_bike_accidents = 0;
+          let sum_pedestrian_accidents = 0;
+          
+          features.forEach(feature => {
+            if (feature.attributes.IstRad === "1") sum_bike_accidents++;
+            if (feature.attributes.IstFuss === "1") sum_pedestrian_accidents++;
+          });
 
           const formatter = new Intl.NumberFormat();
-          const cases = formatter.format(sum_of_cases);
-          const deaths = formatter.format(sum_of_deaths);
+          const bikes = formatter.format(sum_bike_accidents);
+          const pedestrians = formatter.format(sum_pedestrian_accidents);
 
-          document.getElementById("cases").innerHTML = cases;
-          document.getElementById("deaths").innerHTML = deaths;
+          document.getElementById("bike").innerHTML = bikes;
+          document.getElementById("pedestrian").innerHTML = pedestrians;
 
           view.graphics.removeAll();
           view.graphics.add({
